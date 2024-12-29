@@ -16,30 +16,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.zaxxer.hikari.HikariDataSource;
 
 import potel.utils.JDBCConstants;
+import static potel.utils.Defines.*;
 
-@WebServlet(description = "查詢訂房訂單列表", urlPatterns = { "/api/orders" })
-public class QueryOrders extends HttpServlet {
+@WebServlet(description = "查詢預約訂房訂單明細", urlPatterns = { "/api/order" })
+public class QueryOrderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String memberid = req.getParameter("memberid");
-		String orderstate = req.getParameter("orderstate");
-		System.out.println("[" + sdf.format(new Date()) + "] memberid=" + memberid + ", orderstate=" + orderstate);
-		
-		SimpleDateFormat sdfd = new SimpleDateFormat("yyyy-MM-dd");
+		String orderid = req.getParameter("orderid");
+		System.out.println("[" + sdf.format(new Date()) + "] orderid=" + orderid);
 		
 		HikariDataSource ds = JDBCConstants.getDataSource();
 		
 		try (
 		     Connection conn = ds.getConnection();
-		     PreparedStatement pstmt = conn.prepareStatement("select o.ORDERID,o.ROOMID,o.EXPDATES,o.EXPDATEE"
+		     PreparedStatement pstmt = conn.prepareStatement("select o.ROOMID,o.EXPDATES,o.EXPDATEE"
 		                                                     + ",o.DATES,o.DATEE,o.AMOUNT,o.REFUNDAMOUNT,o.PETID"
 		                                                     + ",o.PAYMENTSTATE,o.REFUNDSTATE,o.SCORE,o.COMMENT,o.PAYDATETIME"
 		                                                     + ",o.REFUNDDATETIME,o.CREATEDATE"
@@ -51,16 +48,14 @@ public class QueryOrders extends HttpServlet {
 		                                                     + " inner join IMAGES im on rt.IMAGEID=im.IMAGEID"
 		                                                     + " inner join PETS p on o.PETID=p.PETID"
 		                                                     + " inner join MEMBERS m on m.MEMBERID=o.MEMBERID"
-		                                                     + " where o.MEMBERID=? and o.ORDERSTATE=?");		) {
+		                                                     + " where o.ORDERID=?");		) {
 			Object temp = null;
 			int pindex = 1;
-			pstmt.setInt(pindex++, Integer.valueOf(memberid));
-			pstmt.setString(pindex++, String.valueOf(orderstate));
+			pstmt.setInt(pindex++, Integer.valueOf(orderid));
 			try(ResultSet rs = pstmt.executeQuery();){
-				JsonArray jorders = new JsonArray();
-				while(rs.next()) {
+				if(rs.next()) {
 					JsonObject jorder = new JsonObject();
-					jorder.addProperty("orderid", rs.getInt("ORDERID"));
+					jorder.addProperty("orderid", Integer.valueOf(orderid));
 					jorder.addProperty("roomid", rs.getInt("ROOMID"));
 					jorder.addProperty("expdates", sdfd.format(rs.getDate("EXPDATES")));
 					jorder.addProperty("expdatee", sdfd.format(rs.getDate("EXPDATEE")));
@@ -87,18 +82,19 @@ public class QueryOrders extends HttpServlet {
 					jmember.addProperty("name", rs.getString("NAME"));
 					jorder.add("member", jmember);
 
-					
-					jorders.add(jorder);
+					Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss")
+										.create();
+					resp.getWriter().write(gson.toJson(jorder));
+				}else {
+					System.out.println("沒有資料");
+					resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
 				}
-				Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss")
-				                             .create();
-				resp.getWriter().write(gson.toJson(jorders));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }
