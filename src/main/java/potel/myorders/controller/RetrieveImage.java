@@ -1,9 +1,12 @@
-package potel.servlet.myorders;
+package potel.myorders.controller;
+
+import static potel.utils.Defines.sdf;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +25,7 @@ public class RetrieveImage extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String imageid = req.getParameter("imageid");
-		
+		System.out.println("[" + sdf.format(new Date()) + "] imageid=" + imageid);
 		HikariDataSource ds = JDBCConstants.getDataSource();
 		try (Connection conn = ds.getConnection();
 		     PreparedStatement pstmt = conn.prepareStatement("select IMAGEDATA from IMAGES where IMAGEID=?");) {
