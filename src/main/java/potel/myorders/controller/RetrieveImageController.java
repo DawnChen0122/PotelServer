@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import potel.utils.JDBCConstants;
 
 @WebServlet("/api/image")
-public class RetrieveImage extends HttpServlet {
+public class RetrieveImageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	@Override

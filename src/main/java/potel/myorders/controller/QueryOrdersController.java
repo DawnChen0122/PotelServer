@@ -15,28 +15,31 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.zaxxer.hikari.HikariDataSource;
 
-import potel.myorders.vo.Order;
 import potel.utils.JDBCConstants;
-
 import static potel.utils.Defines.*;
 
-@WebServlet(description = "查詢預約訂房訂單明細", urlPatterns = { "/api/order" })
-public class QueryOrderServlet extends HttpServlet {
+@WebServlet(description = "查詢訂房訂單列表", urlPatterns = { "/api/orders" })
+public class QueryOrdersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String orderid = req.getParameter("orderid");
-		System.out.println("[" + sdf.format(new Date()) + "] orderid=" + orderid);
+		String memberid = req.getParameter("memberid");
+		String orderstate = req.getParameter("orderstate");
+		System.out.println("[" + sdf.format(new Date()) + "] memberid=" + memberid + ", orderstate=" + orderstate);
+		
+		
 		
 		HikariDataSource ds = JDBCConstants.getDataSource();
 		
 		try (
 		     Connection conn = ds.getConnection();
-		     PreparedStatement pstmt = conn.prepareStatement("select o.ROOMID,o.EXPDATES,o.EXPDATEE"
+		     PreparedStatement pstmt = conn.prepareStatement("select o.ORDERID,o.ROOMID,o.EXPDATES,o.EXPDATEE"
 		                                                     + ",o.DATES,o.DATEE,o.AMOUNT,o.REFUNDAMOUNT,o.PETID"
 		                                                     + ",o.PAYMENTSTATE,o.REFUNDSTATE,o.SCORE,o.COMMENT,o.PAYDATETIME"
 		                                                     + ",o.REFUNDDATETIME,o.CREATEDATE"
@@ -48,14 +51,16 @@ public class QueryOrderServlet extends HttpServlet {
 		                                                     + " inner join IMAGES im on rt.IMAGEID=im.IMAGEID"
 		                                                     + " inner join PETS p on o.PETID=p.PETID"
 		                                                     + " inner join MEMBERS m on m.MEMBERID=o.MEMBERID"
-		                                                     + " where o.ORDERID=?");		) {
+		                                                     + " where o.MEMBERID=? and o.ORDERSTATE=?");		) {
 			Object temp = null;
 			int pindex = 1;
-			pstmt.setInt(pindex++, Integer.valueOf(orderid));
+			pstmt.setInt(pindex++, Integer.valueOf(memberid));
+			pstmt.setString(pindex++, String.valueOf(orderstate));
 			try(ResultSet rs = pstmt.executeQuery();){
-				if(rs.next()) {
+				JsonArray jorders = new JsonArray();
+				while(rs.next()) {
 					JsonObject jorder = new JsonObject();
-					jorder.addProperty("orderid", Integer.valueOf(orderid));
+					jorder.addProperty("orderid", rs.getInt("ORDERID"));
 					jorder.addProperty("roomid", rs.getInt("ROOMID"));
 					jorder.addProperty("expdates", sdfd.format(rs.getDate("EXPDATES")));
 					jorder.addProperty("expdatee", sdfd.format(rs.getDate("EXPDATEE")));
@@ -65,7 +70,7 @@ public class QueryOrderServlet extends HttpServlet {
 					jorder.addProperty("amount", rs.getInt("AMOUNT"));
 					jorder.addProperty("refundamount", rs.getInt("REFUNDAMOUNT"));
 					jorder.addProperty("petid", rs.getInt("PETID"));
-					jorder.addProperty("createdate", (temp=rs.getDate("CREATEDATE"))==null?null:sdfd.format(temp));
+					jorder.addProperty("createdate", sdfd.format(rs.getDate("CREATEDATE")));
 					
 					JsonObject jroomtype = new JsonObject();
 					jroomtype.addProperty("roomtypeid", rs.getInt("ROOMTYPEID"));
@@ -83,77 +88,18 @@ public class QueryOrderServlet extends HttpServlet {
 					jmember.addProperty("name", rs.getString("NAME"));
 					jorder.add("member", jmember);
 
-					Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss")
-										.create();
-					resp.getWriter().write(gson.toJson(jorder));
-				}else {
-					System.out.println("沒有資料");
-					resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+					
+					jorders.add(jorder);
 				}
+				Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss")
+				                             .create();
+				resp.getWriter().write(gson.toJson(jorders));
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-
-	}
-	
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String op = req.getParameter("op");
 		
-		Gson gson = new GsonBuilder()
-							.setDateFormat("yyyy/MM/dd HH:mm:ss")
-							.create();
-		Order order = gson.fromJson(req.getReader(), Order.class); // 要轉出的物件型態
-		
-		if("cancel".equalsIgnoreCase(op)) {
-			HikariDataSource ds = JDBCConstants.getDataSource();
-			try (Connection conn = ds.getConnection();
-			     PreparedStatement pstmt = conn.prepareStatement("update ORDERS set ORDERSTATE=? where ORDERID=?");) {
-				int pind = 1;
-				pstmt.setString(pind++, order.getOrderstate());
-				pstmt.setInt(pind++, order.getOrderid());
-				int effect = pstmt.executeUpdate();
-				System.out.println("op=" + op + ", orderid=" + order.getOrderid() + ", effect=" + effect);
-				
-				JsonObject jres = new JsonObject();
-				jres.addProperty("respcode", 0);
-				jres.addProperty("respmsg", "取消訂單成功(" + effect + ")");
-				resp.getWriter().write(gson.toJson(jres));
-			} catch (SQLException e) {
-				e.printStackTrace();
-				JsonObject jres = new JsonObject();
-				jres.addProperty("respcode", 1);
-				jres.addProperty("respmsg", "取消訂單失敗(" + e + ")");
-				resp.getWriter().write(gson.toJson(jres));
-			}
-		}else if("score".equalsIgnoreCase(op)) {
-			HikariDataSource ds = JDBCConstants.getDataSource();
-			try (Connection conn = ds.getConnection();
-			     PreparedStatement pstmt = conn.prepareStatement("update ORDERS set SCORE=?,COMMENT=? where ORDERID=?");) {
-				int pind = 1;
-				pstmt.setInt(pind++, order.getScore());
-				pstmt.setString(pind++, order.getComment());
-				pstmt.setInt(pind++, order.getOrderid());
-				int effect = pstmt.executeUpdate();
-				System.out.println("op=" + op + ", orderid=" + order.getOrderid() + ", effect=" + effect);
-			
-				JsonObject jres = new JsonObject();
-				jres.addProperty("respcode", 0);
-				jres.addProperty("respmsg", "訂單評分成功(" + effect + ")");
-				resp.getWriter().write(gson.toJson(jres));
-			} catch (SQLException e) {
-				e.printStackTrace();
-				
-				JsonObject jres = new JsonObject();
-				jres.addProperty("respcode", 1);
-				jres.addProperty("respmsg", "訂單評分失敗(" + e + ")");
-				resp.getWriter().write(gson.toJson(jres));
-			}
-		}else {
-			// TODO: 目前會送來都是一定有確定的動作, 可先不處理
-		}
 	}
 }
