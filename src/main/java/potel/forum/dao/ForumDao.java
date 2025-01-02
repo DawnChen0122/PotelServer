@@ -6,5 +6,5 @@ import potel.forum.vo.Forum;
 
 public interface ForumDao {
 	
-	List<Forum> selectAll();
+	List<Forum> selectAll() ;
 }

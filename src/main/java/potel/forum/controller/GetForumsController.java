@@ -13,14 +13,14 @@ import potel.forum.service.ForumService;
 import potel.forum.service.impl.ForumServiceImpl;
 import potel.forum.vo.Forum;
 
-@WebServlet("/GetForum")
-public class GetForum extends HttpServlet {
+@WebServlet("/GetForums")
+public class GetForumsController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private ForumService forumService;
 
     // 在構造函數中初始化 ForumService
-    public GetForum() {
+    public GetForumsController() {
         this.forumService = new ForumServiceImpl();  // 使用 ForumServiceImpl 實現類
     }
 
