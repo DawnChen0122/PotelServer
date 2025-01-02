@@ -1,5 +1,8 @@
 package potel.myorders.vo;
 
-public class PlaceHolderBean {
+import lombok.Data;
 
+@Data
+public class PlaceHolderBean {
+	private String placeholder;
 }
