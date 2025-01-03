@@ -6,6 +6,7 @@ import potel.forum.dao.ForumDao;
 import potel.forum.dao.impl.ForumDaoImpl;
 import potel.forum.service.ForumService;
 import potel.forum.vo.Forum;
+import potel.forum.vo.Like;
 
 public class ForumServiceImpl implements ForumService {
 	
@@ -21,6 +22,14 @@ public class ForumServiceImpl implements ForumService {
 		 List<Forum> forums = forumDao.selectAll();
 		    System.out.println("Retrieved forums: " + forums.size()); // 打印返回的論壇數量
 		    return forums;
+	}
+
+	@Override
+	public List<Like> getLike() {
+		System.out.println("Forum service get likes");
+		 List<Like> Likes = forumDao.selectlike();
+		    System.out.println("Retrieved Likes: " + Likes.size()); // 打印返回的論壇數量
+		    return Likes;
 	}
 	
 }

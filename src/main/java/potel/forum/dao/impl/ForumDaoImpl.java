@@ -11,6 +11,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import potel.forum.dao.ForumDao;
 import potel.forum.vo.Forum;
+import potel.forum.vo.Like;
 
 public class ForumDaoImpl implements ForumDao {
 
@@ -27,6 +28,7 @@ public class ForumDaoImpl implements ForumDao {
 
     @Override
     public List<Forum> selectAll() {
+
         String sql = "SELECT * FROM forum";
         List<Forum> forums = new ArrayList<>();
         
@@ -56,4 +58,34 @@ public class ForumDaoImpl implements ForumDao {
         
         return forums.isEmpty() ? null : forums;
     }
+
+	
+    @Override
+	public List<Like> selectlike() {
+    	String sql = "SELECT * FROM likes";
+        List<Like> likes = new ArrayList<>();
+        try (Connection conn = ds.getConnection(); 
+                PreparedStatement pstmt = conn.prepareStatement(sql); 
+                ResultSet rs = pstmt.executeQuery()) {
+
+               System.out.println("Database connection established.");
+               
+               while (rs.next()) {
+                   Like like = new Like();
+                   like.setLikeId(rs.getInt("LIKEID"));
+                   like.setMemberId(rs.getInt("MEMBERID"));
+                   like.setPostId(rs.getInt("POSTID"));
+                   like.setCreateDate(rs.getTimestamp("CREATEDATE"));
+                   likes.add(like);
+               }
+
+               System.out.println("Fetched " + likes.size() + " likes from the database.");
+           } catch (SQLException e) {
+               // 使用日誌框架替換 printStackTrace()
+               e.printStackTrace();
+           }
+
+           return likes.isEmpty() ? null : likes;
+	}
+
 }
