@@ -1,18 +1,18 @@
 package potel.forum.vo;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Like {
     private int likeId;
     private int memberId;
     private int postId;
-    private Date createDate;
+    private Timestamp createDate;
 
     // 無參數建構子
     public Like() {}
 
     // 帶參數建構子
-    public Like(int likeId, int memberId, int postId, Date createDate) {
+    public Like(int likeId, int memberId, int postId, Timestamp createDate) {
         this.likeId = likeId;
         this.memberId = memberId;
         this.postId = postId;
@@ -44,11 +44,11 @@ public class Like {
         this.postId = postId;
     }
 
-    public Date getCreateDate() {
+    public Timestamp getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(Timestamp createDate) {
         this.createDate = createDate;
     }
 

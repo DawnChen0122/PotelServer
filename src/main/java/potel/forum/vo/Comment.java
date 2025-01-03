@@ -2,34 +2,37 @@ package potel.forum.vo;
 
 import java.sql.Timestamp;
 
-public class Forum {
-
-    // 資料庫中的欄位
-    private int postId; // POSTID
-    private int memberId; // MEMBERID
-    private String title; // TITLE
+public class Comment {
+    private int commentId; // COMMENTID
+    private int postId;    // POSTID
+    private int memberId;  // MEMBERID
     private String content; // CONTENT
     private Timestamp createDate; // CREATEDATE
-    private Timestamp modifyDate; // MODIFYDATE
-    private Integer postImageId; // POSTIMAGEID (改為 Integer，允許為 null)
+    private Timestamp modifyDate; // MODIFYDATE 
 
-    // 無參數構造函數
-    public Forum() {
+    // Default constructor
+    public Comment() {
     }
 
-    // 帶參構造函數
-    public Forum(int postId, int memberId, String title, String content, Timestamp createDate, Timestamp modifyDate,
-                 Integer postImageId) {
+    // Constructor with parameters
+    public Comment(int commentId, int postId, int memberId, String content, Timestamp createDate, Timestamp modifyDate) {
+        this.commentId = commentId;
         this.postId = postId;
         this.memberId = memberId;
-        this.title = title;
         this.content = content;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
-        this.postImageId = postImageId;
     }
 
-    // Getter and Setter methods
+    // Getters and Setters
+    public int getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(int commentId) {
+        this.commentId = commentId;
+    }
+
     public int getPostId() {
         return postId;
     }
@@ -44,14 +47,6 @@ public class Forum {
 
     public void setMemberId(int memberId) {
         this.memberId = memberId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
@@ -78,12 +73,16 @@ public class Forum {
         this.modifyDate = modifyDate;
     }
 
-    public Integer getPostImageId() {
-        return postImageId;
-    }
-
-    public void setPostImageId(Integer postImageId) {
-        this.postImageId = postImageId;
+    // toString method for debugging
+    @Override
+    public String toString() {
+        return "Comments{" +
+                "commentId=" + commentId +
+                ", postId=" + postId +
+                ", memberId=" + memberId +
+                ", content='" + content + '\'' +
+                ", createDate=" + createDate +
+                ", modifyDate=" + modifyDate +
+                '}';
     }
 }
-
