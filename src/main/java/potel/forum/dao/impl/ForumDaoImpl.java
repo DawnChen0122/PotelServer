@@ -16,6 +16,7 @@ import potel.forum.dao.ForumDao;
 import potel.forum.vo.Comment;
 import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
+import potel.forum.vo.Post;
 
 public class ForumDaoImpl implements ForumDao {
 
@@ -123,7 +124,8 @@ public class ForumDaoImpl implements ForumDao {
 	}
 
 	@Override
-	public Integer insertPost(Forum post) {
+	public Integer insertPost(Post post) {
+		System.out.println("insert post dao");
 		LocalDateTime now = LocalDateTime.now();
 	    Timestamp timestamp = Timestamp.valueOf(now);
 	    String sql = "INSERT INTO Forum (memberId, title, content, createDate, postImageId) VALUES (?, ?, ?, ?, ?)";
@@ -135,12 +137,6 @@ public class ForumDaoImpl implements ForumDao {
 	        pstmt.setString(3, post.getContent());
 	        pstmt.setTimestamp(4, timestamp);
 	        
-	        if (post.getPostImageId() != null) {
-	            pstmt.setInt(5, post.getPostImageId());
-	        } else {
-	            pstmt.setNull(5, java.sql.Types.INTEGER);
-	        }
-
 	        int affectedRows = pstmt.executeUpdate();
 
 	        if (affectedRows == 0) {
@@ -160,5 +156,28 @@ public class ForumDaoImpl implements ForumDao {
 	        e.printStackTrace();  
 	        return -1;  
 	    }
+	}
+
+	@Override
+	public byte[] getImageById(int imageId) {
+		byte[] imageData = null;
+
+	    try (Connection conn = ds.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement("SELECT IMAGEDATA FROM IMAGES WHERE IMAGEID = ?")) {
+
+	        pstmt.setInt(1, imageId);  // 設置參數為 imageId
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                // 如果有結果，從結果集取得圖片的字節數據
+	                imageData = rs.getBytes("IMAGEDATA");
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return imageData;  // 如果圖片資料不存在，會返回 null
 	}
 }

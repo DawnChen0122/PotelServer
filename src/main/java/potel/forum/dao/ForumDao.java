@@ -5,6 +5,7 @@ import java.util.List;
 import potel.forum.vo.Comment;
 import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
+import potel.forum.vo.Post;
 
 public interface ForumDao {
 	
@@ -14,5 +15,7 @@ public interface ForumDao {
 
 	List<Comment> selectComment();
 
-	Integer insertPost(Forum post);
+	Integer insertPost(Post post);
+
+	byte[] getImageById(int imageId);
 }

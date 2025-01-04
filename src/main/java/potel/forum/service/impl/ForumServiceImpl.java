@@ -8,6 +8,7 @@ import potel.forum.service.ForumService;
 import potel.forum.vo.Comment;
 import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
+import potel.forum.vo.Post;
 
 public class ForumServiceImpl implements ForumService {
 	
@@ -44,9 +45,17 @@ public class ForumServiceImpl implements ForumService {
 	}
 
 
+
 	@Override
-	public Integer AddPost(Forum post) {
+	public byte[] retrieveImage(int imageId) {
+		return forumDao.getImageById(imageId);
+	}
+
+
+	@Override
+	public Integer AddPost(Post post) {
 		return forumDao.insertPost(post);
 	}
-	
+
+
 }
