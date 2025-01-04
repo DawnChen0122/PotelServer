@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ResponseObject {
-	private int responsecode;
-	private String responsemessage;
+	private int respcode;
+	private String respmsg;
+	private Object resobj;
 }

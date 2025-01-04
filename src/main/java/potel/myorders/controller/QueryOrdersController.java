@@ -1,5 +1,8 @@
 package potel.myorders.controller;
 
+import static potel.utils.Defines.sdf;
+import static potel.utils.Defines.sdfd;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,20 +10,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.zaxxer.hikari.HikariDataSource;
 
+import potel.myorders.vo.ResponseObject;
 import potel.utils.JDBCConstants;
-import static potel.utils.Defines.*;
 
 @WebServlet(description = "查詢訂房訂單列表", urlPatterns = { "/api/orders" })
 public class QueryOrdersController extends HttpServlet {
@@ -34,8 +38,15 @@ public class QueryOrdersController extends HttpServlet {
 		System.out.println("[" + sdf.format(new Date()) + "] memberid=" + memberid + ", orderstate=" + orderstate);
 		
 		
-		
-		HikariDataSource ds = JDBCConstants.getDataSource();
+		ResponseObject ro = new ResponseObject();
+		DataSource ds = null;
+		try {
+			ds = JDBCConstants.getDataSource();
+		} catch (NamingException e) {
+			e.printStackTrace();
+			ro.setRespcode(1);
+			ro.setRespmsg("資料源錯誤");
+		}
 		
 		try (
 		     Connection conn = ds.getConnection();

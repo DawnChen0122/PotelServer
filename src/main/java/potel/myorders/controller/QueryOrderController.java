@@ -1,5 +1,8 @@
 package potel.myorders.controller;
 
+import static potel.utils.Defines.sdf;
+import static potel.utils.Defines.sdfd;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,21 +10,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.zaxxer.hikari.HikariDataSource;
 
 import potel.myorders.vo.Order;
 import potel.utils.JDBCConstants;
-
-import static potel.utils.Defines.*;
 
 @WebServlet(description = "查詢預約訂房訂單明細", urlPatterns = { "/api/order" })
 public class QueryOrderController extends HttpServlet {
@@ -32,7 +34,13 @@ public class QueryOrderController extends HttpServlet {
 		String orderid = req.getParameter("orderid");
 		System.out.println("[" + sdf.format(new Date()) + "] orderid=" + orderid);
 		
-		HikariDataSource ds = JDBCConstants.getDataSource();
+		DataSource ds = null;
+		try {
+			ds = JDBCConstants.getDataSource();
+		} catch (NamingException e) {
+			e.printStackTrace();
+			
+		}
 		
 		try (
 		     Connection conn = ds.getConnection();
@@ -107,9 +115,15 @@ public class QueryOrderController extends HttpServlet {
 							.setDateFormat("yyyy/MM/dd HH:mm:ss")
 							.create();
 		Order order = gson.fromJson(req.getReader(), Order.class); // 要轉出的物件型態
+		DataSource ds = null;
+		try {
+			ds = JDBCConstants.getDataSource();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if("cancel".equalsIgnoreCase(op)) {
-			HikariDataSource ds = JDBCConstants.getDataSource();
 			try (Connection conn = ds.getConnection();
 			     PreparedStatement pstmt = conn.prepareStatement("update ORDERS set ORDERSTATE=? where ORDERID=?");) {
 				int pind = 1;
@@ -130,7 +144,6 @@ public class QueryOrderController extends HttpServlet {
 				resp.getWriter().write(gson.toJson(jres));
 			}
 		}else if("score".equalsIgnoreCase(op)) {
-			HikariDataSource ds = JDBCConstants.getDataSource();
 			try (Connection conn = ds.getConnection();
 			     PreparedStatement pstmt = conn.prepareStatement("update ORDERS set SCORE=?,COMMENT=? where ORDERID=?");) {
 				int pind = 1;
