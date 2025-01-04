@@ -8,17 +8,11 @@ public interface PetsFileService {
 	List<PetsFile> getPetsFile();
 
 	static void addpetsFile(PetsFile newPetsFile) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	static void deletePet(String petId) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	static void updatePet(PetsFile updatedPet) {
-		// TODO Auto-generated method stub
-		
 	}
 }
