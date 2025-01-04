@@ -8,14 +8,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.w3c.dom.ls.LSOutput;
+
 import com.google.gson.Gson;
 
 import potel.forum.service.ForumService;
 import potel.forum.service.impl.ForumServiceImpl;
 import potel.forum.vo.Forum;
 
-@WebServlet("/Forum/addPost")
+@WebServlet("/Forum/AddPost")
 public class AddPostController extends HttpServlet{
+	
 	private static final long serialVersionUID = 1L;
 	private ForumService forumService;
 
@@ -24,10 +27,10 @@ public class AddPostController extends HttpServlet{
     public void init() throws ServletException {
         forumService = new ForumServiceImpl();  // 初始化 ForumService
     }
-
+    	
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
+    	System.out.println("Forum service doPost");
         Gson gson = new Gson();
         Forum post = gson.fromJson(req.getReader(), Forum.class);
         

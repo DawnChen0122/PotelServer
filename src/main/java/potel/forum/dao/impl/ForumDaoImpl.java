@@ -147,18 +147,18 @@ public class ForumDaoImpl implements ForumDao {
 	            throw new SQLException("Creating post failed, no rows affected.");
 	        }
 
-	        // 获取生成的主键
+	       
 	        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
 	            if (generatedKeys.next()) {
-	                return generatedKeys.getInt(1);  // 返回新创建的Post ID
+	                return generatedKeys.getInt(1);  
 	            } else {
 	                throw new SQLException("Creating post failed, no ID obtained.");
 	            }
 	        }
 
 	    } catch (SQLException e) {
-	        e.printStackTrace();  // 或者记录日志
-	        return -1;  // 返回错误标识
+	        e.printStackTrace();  
+	        return -1;  
 	    }
 	}
 }
