@@ -15,6 +15,4 @@ public interface ForumService {
 	List<Comment> getComment();
 
 	Integer AddPost(Post post);
-
-	byte[] retrieveImage(int imageId);
 }

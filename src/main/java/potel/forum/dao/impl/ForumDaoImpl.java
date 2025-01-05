@@ -51,7 +51,7 @@ public class ForumDaoImpl implements ForumDao {
 				forum.setContent(rs.getString("CONTENT"));
 				forum.setCreateDate(rs.getTimestamp("CREATEDATE"));
 				forum.setModifyDate(rs.getTimestamp("MODIFYDATE"));
-				forum.setPostImageId(rs.getInt("POSTIMAGEID"));
+				forum.setPostImage(rs.getString("POSTIMAGE"));
 				forums.add(forum);
 			}
 
@@ -126,24 +126,34 @@ public class ForumDaoImpl implements ForumDao {
 	@Override
 	public Integer insertPost(Post post) {
 		System.out.println("insert post dao");
+		System.out.println("MEMBERID: " + post.getMemberId());
+		System.out.println("TITLE: " + post.getTitle());
+		System.out.println("CONTENT: " + post.getContent());
+		System.out.println("POSTIMAGE: " + post.getPostImage());
 		LocalDateTime now = LocalDateTime.now();
 	    Timestamp timestamp = Timestamp.valueOf(now);
-	    String sql = "INSERT INTO Forum (memberId, title, content, createDate, postImageId) VALUES (?, ?, ?, ?, ?)";
+	    String sql = "INSERT INTO Forum (MEMBERID, TITLE, CONTENT, CREATEDATE,MODIFYDATE, POSTIMAGE) VALUES (?, ?, ?, ?, ?, ?)";
 
-	    try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+	    try (Connection conn = ds.getConnection(); 
+	         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
 	        pstmt.setInt(1, post.getMemberId());
 	        pstmt.setString(2, post.getTitle());
-	        pstmt.setString(3, post.getContent());
+	        pstmt.setString(3, post.getContent()); // 修正插入 CONTENT 欄位
 	        pstmt.setTimestamp(4, timestamp);
-	        
+	        pstmt.setTimestamp(5, null);
+	        if(post.getPostImage()!=null) {
+	        	pstmt.setString(6, post.getPostImage());
+	        }else {
+	        	pstmt.setString(6, null);
+	        }
+
 	        int affectedRows = pstmt.executeUpdate();
 
 	        if (affectedRows == 0) {
 	            throw new SQLException("Creating post failed, no rows affected.");
 	        }
 
-	       
 	        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
 	            if (generatedKeys.next()) {
 	                return generatedKeys.getInt(1);  
@@ -156,28 +166,5 @@ public class ForumDaoImpl implements ForumDao {
 	        e.printStackTrace();  
 	        return -1;  
 	    }
-	}
-
-	@Override
-	public byte[] getImageById(int imageId) {
-		byte[] imageData = null;
-
-	    try (Connection conn = ds.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement("SELECT IMAGEDATA FROM IMAGES WHERE IMAGEID = ?")) {
-
-	        pstmt.setInt(1, imageId);  // 設置參數為 imageId
-
-	        try (ResultSet rs = pstmt.executeQuery()) {
-	            if (rs.next()) {
-	                // 如果有結果，從結果集取得圖片的字節數據
-	                imageData = rs.getBytes("IMAGEDATA");
-	            }
-	        }
-
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-
-	    return imageData;  // 如果圖片資料不存在，會返回 null
 	}
 }

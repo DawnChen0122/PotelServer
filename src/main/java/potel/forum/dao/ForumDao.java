@@ -16,6 +16,4 @@ public interface ForumDao {
 	List<Comment> selectComment();
 
 	Integer insertPost(Post post);
-
-	byte[] getImageById(int imageId);
 }

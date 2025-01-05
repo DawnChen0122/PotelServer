@@ -11,7 +11,7 @@ public class Forum {
     private String content; // CONTENT
     private Timestamp createDate; // CREATEDATE
     private Timestamp modifyDate; // MODIFYDATE
-    private Integer postImageId; // POSTIMAGEID (改為 Integer，允許為 null)
+    private String postImage; // POSTIMAGEID (改為 Integer，允許為 null)
 
     // 無參數構造函數
     public Forum() {
@@ -19,14 +19,14 @@ public class Forum {
 
     // 帶參構造函數
     public Forum(int postId, int memberId, String title, String content, Timestamp createDate, Timestamp modifyDate,
-                 Integer postImageId) {
+    		String postImage) {
         this.postId = postId;
         this.memberId = memberId;
         this.title = title;
         this.content = content;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
-        this.postImageId = postImageId;
+        this.postImage = postImage;
     }
 
     // Getter and Setter methods
@@ -78,12 +78,12 @@ public class Forum {
         this.modifyDate = modifyDate;
     }
 
-    public Integer getPostImageId() {
-        return postImageId;
+    public String getPostImage() {
+        return postImage;
     }
 
-    public void setPostImageId(Integer postImageId) {
-        this.postImageId = postImageId;
+    public void setPostImage(String postImage) {
+        this.postImage = postImage;
     }
 }
 

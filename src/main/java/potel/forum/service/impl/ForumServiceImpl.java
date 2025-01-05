@@ -44,14 +44,6 @@ public class ForumServiceImpl implements ForumService {
 		    return Comments;
 	}
 
-
-
-	@Override
-	public byte[] retrieveImage(int imageId) {
-		return forumDao.getImageById(imageId);
-	}
-
-
 	@Override
 	public Integer AddPost(Post post) {
 		return forumDao.insertPost(post);
