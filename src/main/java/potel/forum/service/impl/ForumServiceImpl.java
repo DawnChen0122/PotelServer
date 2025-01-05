@@ -1,14 +1,13 @@
 package potel.forum.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
-
 import potel.forum.dao.ForumDao;
 import potel.forum.dao.impl.ForumDaoImpl;
 import potel.forum.service.ForumService;
 import potel.forum.vo.Comment;
 import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
-import potel.forum.vo.Post;
 
 public class ForumServiceImpl implements ForumService {
 	
@@ -18,7 +17,6 @@ public class ForumServiceImpl implements ForumService {
 		this.forumDao = new ForumDaoImpl();
 	}
 	
-
 	@Override
 	public List<Forum> getForum() {
 		System.out.println("Forum service get forum");
@@ -45,9 +43,16 @@ public class ForumServiceImpl implements ForumService {
 	}
 
 	@Override
-	public Integer AddPost(Post post) {
-		return forumDao.insertPost(post);
+	public int saveImageToDatabase(InputStream imageStream) {
+		return forumDao.insertImage(imageStream);
 	}
 
+	
+	@Override
+	public void addPost(int memberId, String title, String content, int imageId) {
+		forumDao.addPost(memberId, title, content, imageId);
+	}
+
+	
 
 }

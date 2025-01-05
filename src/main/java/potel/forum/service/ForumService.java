@@ -1,11 +1,10 @@
 package potel.forum.service;
 
+import java.io.InputStream;
 import java.util.List;
-
 import potel.forum.vo.Comment;
 import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
-import potel.forum.vo.Post;
 
 public interface ForumService {
 	List<Forum> getForum();
@@ -14,5 +13,10 @@ public interface ForumService {
 
 	List<Comment> getComment();
 
-	Integer AddPost(Post post);
+	int saveImageToDatabase(InputStream imageStream);
+
+	void addPost(int memberId, String title, String content, int imageId);
+
+	
+
 }

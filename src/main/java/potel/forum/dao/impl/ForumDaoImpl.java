@@ -1,5 +1,6 @@
 package potel.forum.dao.impl;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +9,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -16,7 +18,6 @@ import potel.forum.dao.ForumDao;
 import potel.forum.vo.Comment;
 import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
-import potel.forum.vo.Post;
 
 public class ForumDaoImpl implements ForumDao {
 
@@ -34,7 +35,7 @@ public class ForumDaoImpl implements ForumDao {
 	@Override
 	public List<Forum> selectAll() {
 
-		String sql = "SELECT * FROM forum";
+		String sql = "SELECT * FROM forum"; // 可考慮只選擇必要的欄位來提高效能
 		List<Forum> forums = new ArrayList<>();
 
 		try (Connection conn = ds.getConnection();
@@ -51,11 +52,11 @@ public class ForumDaoImpl implements ForumDao {
 				forum.setContent(rs.getString("CONTENT"));
 				forum.setCreateDate(rs.getTimestamp("CREATEDATE"));
 				forum.setModifyDate(rs.getTimestamp("MODIFYDATE"));
-				forum.setPostImage(rs.getString("POSTIMAGE"));
+				forum.setImageId(rs.getInt("IMAGEID"));
 				forums.add(forum);
 			}
 
-			System.out.println("Fetched " + forums.size() + " forums from the database.");
+			System.out.println("Fetched " + forums.size() + " likes from the database.");
 		} catch (SQLException e) {
 			// 使用日誌框架替換 printStackTrace()
 			e.printStackTrace();
@@ -124,47 +125,48 @@ public class ForumDaoImpl implements ForumDao {
 	}
 
 	@Override
-	public Integer insertPost(Post post) {
-		System.out.println("insert post dao");
-		System.out.println("MEMBERID: " + post.getMemberId());
-		System.out.println("TITLE: " + post.getTitle());
-		System.out.println("CONTENT: " + post.getContent());
-		System.out.println("POSTIMAGE: " + post.getPostImage());
-		LocalDateTime now = LocalDateTime.now();
-	    Timestamp timestamp = Timestamp.valueOf(now);
-	    String sql = "INSERT INTO Forum (MEMBERID, TITLE, CONTENT, CREATEDATE,MODIFYDATE, POSTIMAGE) VALUES (?, ?, ?, ?, ?, ?)";
+	public Integer insertImage(InputStream imageStream) {
+		int imageId = 0;
+		try (Connection conn = ds.getConnection();) { // 替換為你自己的資料庫連線方法
+			String sql = "INSERT INTO images (IMAGEDATA, CREATEDATE) VALUES (?, ?)";
+			try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+				stmt.setBlob(1, imageStream);
+				stmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+				stmt.executeUpdate();
 
-	    try (Connection conn = ds.getConnection(); 
-	         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-	        pstmt.setInt(1, post.getMemberId());
-	        pstmt.setString(2, post.getTitle());
-	        pstmt.setString(3, post.getContent()); // 修正插入 CONTENT 欄位
-	        pstmt.setTimestamp(4, timestamp);
-	        pstmt.setTimestamp(5, null);
-	        if(post.getPostImage()!=null) {
-	        	pstmt.setString(6, post.getPostImage());
-	        }else {
-	        	pstmt.setString(6, null);
-	        }
-
-	        int affectedRows = pstmt.executeUpdate();
-
-	        if (affectedRows == 0) {
-	            throw new SQLException("Creating post failed, no rows affected.");
-	        }
-
-	        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-	            if (generatedKeys.next()) {
-	                return generatedKeys.getInt(1);  
-	            } else {
-	                throw new SQLException("Creating post failed, no ID obtained.");
-	            }
-	        }
-
-	    } catch (SQLException e) {
-	        e.printStackTrace();  
-	        return -1;  
-	    }
+				// 獲取自動生成的 IMAGEID
+				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						imageId = generatedKeys.getInt(1);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return imageId;
 	}
+
+	@Override
+	public void addPost(int memberId, String title, String content, int imageId) {
+		try (Connection conn = ds.getConnection()) {
+			String sql = "INSERT INTO forum (MEMBERID, TITLE, CONTENT, CREATEDATE, IMAGEID) VALUES (?, ?, ?, ?, ?)";
+			try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+				stmt.setInt(1, memberId);
+				stmt.setString(2, title);
+				stmt.setString(3, content);
+				stmt.setTimestamp(4, Timestamp.valueOf(java.time.LocalDateTime.now()));
+				if (imageId > 0) {
+					stmt.setInt(5, imageId);
+				} else {
+					stmt.setNull(5, java.sql.Types.INTEGER);
+				}
+				stmt.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
