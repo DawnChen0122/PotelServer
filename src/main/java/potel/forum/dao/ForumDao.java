@@ -18,4 +18,6 @@ public interface ForumDao {
 	Integer insertImage(InputStream imageStream);
 
 	void addPost(int memberId, String title, String content, int imageId);
+
+	boolean insertComment(Comment comment);
 }

@@ -169,4 +169,27 @@ public class ForumDaoImpl implements ForumDao {
 		}
 	}
 
+	
+	@Override
+	public boolean insertComment(Comment comment) {
+String sql = "INSERT INTO comments (POSTID, MEMBERID, CONTENT) VALUES (?, ?, ?)";
+        
+        try (Connection conn = ds.getConnection(); // 使用資料源獲取連線
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            // 設置參數
+            stmt.setInt(1, comment.getPostId());   // POSTID
+            stmt.setInt(2, comment.getMemberId()); // MEMBERID
+            stmt.setString(3, comment.getContent()); // CONTENT
+            
+            // 執行插入操作
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // 如果影響行數大於 0，表示插入成功
+            
+        } catch (SQLException e) {
+            e.printStackTrace(); // 如果有錯誤則打印出錯誤信息
+            return false; // 發生錯誤時返回 false
+        }
+	}
+
 }

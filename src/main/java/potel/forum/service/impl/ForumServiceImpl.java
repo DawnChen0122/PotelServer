@@ -53,6 +53,11 @@ public class ForumServiceImpl implements ForumService {
 		forumDao.addPost(memberId, title, content, imageId);
 	}
 
+	@Override
+	public boolean addComment(Comment comment) {
+		 return forumDao.insertComment(comment); 
+	}
+
 	
 
 }
