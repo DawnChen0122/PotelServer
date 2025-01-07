@@ -17,6 +17,8 @@ public interface ForumService {
 
 	void addPost(int memberId, String title, String content, int imageId);
 
+	boolean addComment(Comment newComment);
+
 	
 
 }
