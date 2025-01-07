@@ -18,9 +18,16 @@ public class ListServiceImpl implements ListService {
 	}
 
 	@Override
-	public List<Product> selectAll() {
+	public List<Product> selectAll(String prdtype) {
 		// TODO Auto-generated method stub
-		return null;
+		if(prdtype==null) {
+			System.out.println("未傳入參數(" + prdtype + ")");
+			return null;
+		}else if(!prdtype.equalsIgnoreCase("c") && !prdtype.equalsIgnoreCase("d")) {
+			System.out.println("傳入參數錯誤(" + prdtype + ")");
+			return null;
+		}
+		return listDao.selectAll(prdtype.toUpperCase());
 	}
 
 	@Override

@@ -24,24 +24,27 @@ public class ListDaoImpl implements ListDao {
 	}
 
 	@Override
-	public List<Product> selectAll() {
-		String sql = "select * from products";
+	public List<Product> selectAll(String prdtype) {
+		String sql = "select * from products where PRDTYPE=?";
 		List<Product> list = new ArrayList<>();
 		try (
 				Connection conn = ds.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
-				ResultSet rs = pstmt.executeQuery()) {
-
-			while (rs.next()) {
-				Product product = new Product();
-				product.setPrdName(rs.getString("PRDNAME"));
-				product.setPrice(rs.getInt("PRICE"));
-				product.setImageId(rs.getInt("IMAGEID"));
-				product.setPrdDesc(rs.getString("PRDDESC"));
-				list.add(product);
+				) {
+			System.out.println("prdtype=" + prdtype);
+			pstmt.setString(1, prdtype);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					Product product = new Product();
+					product.setPrdId(rs.getInt("PRDID"));
+					product.setPrdName(rs.getString("PRDNAME"));
+					product.setPrice(rs.getInt("PRICE"));
+					product.setImageId(rs.getInt("IMAGEID"));
+					product.setPrdDesc(rs.getString("PRDDESC"));
+					list.add(product);
+				}
+				return list;
 			}
-
-			return list;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,9 +70,4 @@ public class ListDaoImpl implements ListDao {
 		return 0;
 	}
 
-	@Override
-	public Product selectByUsernameAndPassword(Product product) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

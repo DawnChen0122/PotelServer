@@ -9,34 +9,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
-
 import potel.shopping.Service.Impl.ListServiceImpl;
 import potel.shopping.Vo.Product;
 
 
-@WebServlet("/shopping/List")
-public class ListController extends HttpServlet {
+@WebServlet("/shopping/Order")
+public class OrderController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("doGet");
-        
-		String prdtype = req.getParameter("prdtype");
-		System.out.println("ListController prdtype=" + prdtype);
-		try {
-        	 ListServiceImpl service = new ListServiceImpl();
-             List<Product> products = service.selectAll(prdtype);
+        try {
+   
+//        	OrderServiceImpl service = new OrderServiceImpl();
+//             List<Product> products = service.selectAll();
 
-             // 將產品列表轉換為 JSON
-             Gson gson = new Gson();
+            // 將產品列表轉換為 JSON
              
-            String json = gson.toJson(products);
+//            String json = gson.toJson(products);
              
             // 將 JSON 回傳給前端
              
-            resp.getWriter().write(json);
+//            resp.getWriter().write(json);
         } catch (Exception e) {
             e.printStackTrace();
          
