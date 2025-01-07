@@ -3,7 +3,6 @@ package potel.myorders.controller;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,13 +23,15 @@ public class QueryProductOrdersController extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String memberid = req.getParameter("memberid");
 		String orderstate = req.getParameter("orderstate");
+		String datestart = req.getParameter("datestart");
+		String dateend = req.getParameter("dateend");
 		
-		System.out.println(Defines.sdf.format(new Date()) + " QueryProductOrdersController(" + memberid + ", " + orderstate + ")");
+		System.out.println(Defines.sdf.format(new Date()) + " QueryProductOrdersController(" + memberid + ", " + orderstate + "), datestart=" + datestart + ", dateend=" + dateend);
 		
 		ResponseObject ro = null;
 		try {
-			ro = new ProductOrderServiceImpl().queryPrdOrders(memberid, orderstate);
-		} catch (NamingException e) {
+			ro = new ProductOrderServiceImpl().queryPrdOrders(memberid, orderstate, datestart, dateend);
+		} catch (Exception e) {
 			ro = new ResponseObject();
 			ro.setRespcode(2);
 			ro.setRespmsg("查詢錯誤");
