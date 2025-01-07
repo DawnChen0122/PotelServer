@@ -29,7 +29,7 @@ public class ProductOrderDaoImpl implements ProductOrderDao {
 	     					+ " from PRDORDERS po"
 	     					+ " inner join MEMBERS m on po.MEMBERID=m.MEMBERID"
 	     					+ " where po.MEMBERID=?");
-		if("9".equals(status)) {
+		if(!"A".equals(status)) {
 			sbsql.append(" and po.STATUS=?");
 		}
 		
@@ -38,7 +38,7 @@ public class ProductOrderDaoImpl implements ProductOrderDao {
 		     PreparedStatement pstmt = conn.prepareStatement(sbsql.toString());) {
 			int pind = 1;
 			pstmt.setInt(pind++, Integer.parseInt(memberid));
-			if("9".equals(status)) {
+			if(!"A".equals(status)) {
 				pstmt.setString(pind++, String.valueOf(status));
 			}
 			try(ResultSet rs = pstmt.executeQuery();){
