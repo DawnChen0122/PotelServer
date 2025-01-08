@@ -74,6 +74,9 @@ public class QueryOrderController extends HttpServlet {
 					jorder.addProperty("refundamount", rs.getInt("REFUNDAMOUNT"));
 					jorder.addProperty("petid", rs.getInt("PETID"));
 					jorder.addProperty("createdate", (temp=rs.getDate("CREATEDATE"))==null?null:sdfd.format(temp));
+					jorder.addProperty("score", rs.getInt("SCORE"));
+					jorder.addProperty("comment", rs.getString("COMMENT"));
+					
 					
 					JsonObject jroomtype = new JsonObject();
 					jroomtype.addProperty("roomtypeid", rs.getInt("ROOMTYPEID"));

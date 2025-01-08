@@ -1,5 +1,7 @@
 package potel.myorders.service.impl;
 
+import java.text.ParseException;
+
 import javax.naming.NamingException;
 
 import potel.myorders.PrdOrderStatusEnum;
@@ -16,7 +18,7 @@ public class ProductOrderServiceImpl implements ProductOrderService{
 	}
 
 	@Override
-	public ResponseObject queryPrdOrders(String memberid, String orderstate) throws NamingException {
+	public ResponseObject queryPrdOrders(String memberid, String orderstate, String datestart, String dateend) throws NamingException, ParseException {
 		ResponseObject ro = new ResponseObject();
 		if(memberid==null || !memberid.matches("^[0-9]+$")) {
 			ro.setRespcode(1);
@@ -24,7 +26,7 @@ public class ProductOrderServiceImpl implements ProductOrderService{
 			return ro;
 		}
 		
-		return podi.queryPrdOrders(memberid, orderstate);
+		return podi.queryPrdOrders(memberid, orderstate, datestart, dateend);
 	}
 
 	@Override

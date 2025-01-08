@@ -35,6 +35,8 @@ public class QueryOrdersController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String memberid = req.getParameter("memberid");
 		String orderstate = req.getParameter("orderstate");
+		String datestart = req.getParameter("datestart");
+		String dateend = req.getParameter("dateend");
 		System.out.println("[" + sdf.format(new Date()) + "] memberid=" + memberid + ", orderstate=" + orderstate);
 		
 		
@@ -48,25 +50,42 @@ public class QueryOrdersController extends HttpServlet {
 			ro.setRespmsg("資料源錯誤");
 		}
 		
+		StringBuilder sql = new StringBuilder("select o.ORDERID,o.ROOMID,o.EXPDATES,o.EXPDATEE"
+                                   + ",o.DATES,o.DATEE,o.AMOUNT,o.REFUNDAMOUNT,o.PETID"
+                                   + ",o.PAYMENTSTATE,o.REFUNDSTATE,o.SCORE,o.COMMENT,o.PAYDATETIME"
+                                   + ",o.REFUNDDATETIME,o.CREATEDATE"
+                                   + ",rt.DESCPT,rt.PETTYPE,rt.IMAGEID RTIMG,rt.ROOMTYPEID"
+                                   + ",p.NICKNAME,p.IMAGEID PIMG"
+                                   + ",m.NAME"
+                                   + " from ORDERS o"
+                                   + " inner join ROOMTYPE rt on o.ROOMTYPEID=rt.ROOMTYPEID"
+                                   + " inner join IMAGES im on rt.IMAGEID=im.IMAGEID"
+                                   + " inner join PETS p on o.PETID=p.PETID"
+                                   + " inner join MEMBERS m on m.MEMBERID=o.MEMBERID"
+                                   + " where o.MEMBERID=? and o.ORDERSTATE=?");
+		if(datestart!=null && !datestart.isEmpty()) {
+			sql.append(" and o.CREATEDATE>=?");
+		}
+		if(dateend!=null && !dateend.isEmpty()) {
+			sql.append(" and o.CREATEDATE<=?");
+		}
+		
 		try (
 		     Connection conn = ds.getConnection();
-		     PreparedStatement pstmt = conn.prepareStatement("select o.ORDERID,o.ROOMID,o.EXPDATES,o.EXPDATEE"
-		                                                     + ",o.DATES,o.DATEE,o.AMOUNT,o.REFUNDAMOUNT,o.PETID"
-		                                                     + ",o.PAYMENTSTATE,o.REFUNDSTATE,o.SCORE,o.COMMENT,o.PAYDATETIME"
-		                                                     + ",o.REFUNDDATETIME,o.CREATEDATE"
-		                                                     + ",rt.DESCPT,rt.PETTYPE,rt.IMAGEID RTIMG,rt.ROOMTYPEID"
-		                                                     + ",p.NICKNAME,p.IMAGEID PIMG"
-		                                                     + ",m.NAME"
-		                                                     + " from ORDERS o"
-		                                                     + " inner join ROOMTYPE rt on o.ROOMTYPEID=rt.ROOMTYPEID"
-		                                                     + " inner join IMAGES im on rt.IMAGEID=im.IMAGEID"
-		                                                     + " inner join PETS p on o.PETID=p.PETID"
-		                                                     + " inner join MEMBERS m on m.MEMBERID=o.MEMBERID"
-		                                                     + " where o.MEMBERID=? and o.ORDERSTATE=?");		) {
+		     PreparedStatement pstmt = conn.prepareStatement(sql.toString());) {
 			Object temp = null;
 			int pindex = 1;
 			pstmt.setInt(pindex++, Integer.valueOf(memberid));
 			pstmt.setString(pindex++, String.valueOf(orderstate));
+			if(datestart!=null && !datestart.isEmpty()) {
+				pstmt.setString(pindex++, datestart + "T00:00:00");
+				
+			}
+			if(dateend!=null && !dateend.isEmpty()) {
+				pstmt.setString(pindex++, dateend + "T23:59:59");
+			}
+			
+			
 			try(ResultSet rs = pstmt.executeQuery();){
 				JsonArray jorders = new JsonArray();
 				while(rs.next()) {
