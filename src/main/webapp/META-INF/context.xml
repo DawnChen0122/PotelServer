@@ -7,7 +7,10 @@
          username="root"
          password="TIP102_25541859101"
          factory="com.zaxxer.hikari.HikariJNDIFactory"
+         minIdle="1"
+         maxTotal="10"
          dataSource.cachePrepStmts="true"
          dataSource.prepStmtCacheSize="250"
-         dataSource.prepStmtCacheSqlLimit="2048" />
+         dataSource.prepStmtCacheSqlLimit="2048"
+          />
 </Context>
