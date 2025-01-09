@@ -7,21 +7,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zaxxer.hikari.HikariDataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import potel.account.dao.AccountDao;
 import potel.account.vo.Member;
 
 public class AccountDaoImpl implements AccountDao {
+    private DataSource ds;
 
-    private HikariDataSource ds;
-
-    public AccountDaoImpl() {
-        ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:mysql://114.32.203.170:3306/potel");
-        ds.setUsername("root");
-        ds.setPassword("TIP102_25541859101");
-        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+    public AccountDaoImpl() throws NamingException {
+        ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/potel");
     }
 
     @Override
@@ -57,21 +54,18 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public boolean insertMember(Member member) {
-        String sql = "INSERT INTO members (name, cellphone, address, gender, birthday, email, passwd, imageid, status, createdate, modifydate) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO members (name, cellphone, address, gender, birthday, email, passwd, imageid) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, member.getName());
             stmt.setString(2, member.getCellphone());
             stmt.setString(3, member.getAddress());
-            stmt.setObject(4, member.getGender()); // 使用 setObject 來處理 Character 類型
+            stmt.setString(4, member.getGender() != null ? member.getGender().toString() : null);
             stmt.setString(5, member.getBirthday());
             stmt.setString(6, member.getEmail());
             stmt.setString(7, member.getPasswd());
             stmt.setInt(8, member.getImageid());
-            stmt.setObject(9,member.getStatus()); // 使用 setObject 來處理 Character 類型
-            stmt.setTimestamp(10,member.getCreatedate());
-            stmt.setTimestamp(11,member.getModifydate());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

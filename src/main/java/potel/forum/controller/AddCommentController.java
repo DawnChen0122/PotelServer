@@ -27,36 +27,36 @@ public class AddCommentController extends HttpServlet {
 	public void init() throws ServletException {
 		forumService = new ForumServiceImpl(); // 初始化 ForumService
 	}
-	
-	 @Override
-	    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	        // 設定回應的內容類型為 JSON
-	        resp.setContentType("application/json");
-	        resp.setCharacterEncoding("UTF-8");
 
-	        // 解析 JSON 請求內容
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(req.getInputStream()));
-	        StringBuilder jsonRequest = new StringBuilder();
-	        String line;
-	        while ((line = reader.readLine()) != null) {
-	            jsonRequest.append(line);
-	        }
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// 設定回應的內容類型為 JSON
+		resp.setContentType("application/json");
+		resp.setCharacterEncoding("UTF-8");
 
-	        // 使用 Gson 解析 JSON 請求
-	        Gson gson = new Gson();
-	        Comment newComment = gson.fromJson(jsonRequest.toString(), Comment.class);  // 反序列化 JSON 為 Comment 對象
+		// 解析 JSON 請求內容
+		BufferedReader reader = new BufferedReader(new InputStreamReader(req.getInputStream()));
+		StringBuilder jsonRequest = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			jsonRequest.append(line);
+		}
 
-	        // 呼叫 Service 層來處理新增留言
-	        boolean isAdded = forumService.addComment(newComment);
+		// 使用 Gson 解析 JSON 請求
+		Gson gson = new Gson();
+		Comment newComment = gson.fromJson(jsonRequest.toString(), Comment.class); // 反序列化 JSON 為 Comment 對象
 
-	        // 構建回應
-	        PrintWriter out = resp.getWriter();
-	        if (isAdded) {
-	            resp.setStatus(HttpServletResponse.SC_OK); // 回應成功狀態碼
-	            out.write("{\"message\": \"Comment added successfully\"}");
-	        } else {
-	            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 失敗狀態碼
-	            out.write("{\"message\": \"Failed to add comment\"}");
-	        }
-	    }
+		// 呼叫 Service 層來處理新增留言
+		boolean isAdded = forumService.addComment(newComment);
+
+		// 構建回應
+		PrintWriter out = resp.getWriter();
+		if (isAdded) {
+			resp.setStatus(HttpServletResponse.SC_OK); // 回應成功狀態碼
+			out.write("{\"message\": \"Comment added successfully\"}");
+		} else {
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 失敗狀態碼
+			out.write("{\"message\": \"Failed to add comment\"}");
+		}
+	}
 }

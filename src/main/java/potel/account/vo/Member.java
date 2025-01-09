@@ -19,3 +19,4 @@ public class Member {
 	private Timestamp createdate;
 	private Timestamp modifydate;
 }
+
