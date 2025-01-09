@@ -5,10 +5,13 @@ import java.util.List;
 import potel.account.vo.Member;
 
 public interface AccountDao {
-	
-	List<Member> selectAll() ;
-	
-	List<Member> selectAccount();
-	
+
+	List<Member> selectAll();
+
 	boolean insertMember(Member member);
+
+	boolean selectForReset(String email, String cellphone);
+
+	int updatePassword(String password, String email);
+
 }

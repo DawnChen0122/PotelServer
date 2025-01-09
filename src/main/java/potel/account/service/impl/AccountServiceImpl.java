@@ -17,4 +17,14 @@ public class AccountServiceImpl implements AccountService {
 	public boolean addMember(Member member) {
 		return accountDao.insertMember(member);
 	}
+
+	@Override
+	public boolean updatepw(String password, String email) {
+		return accountDao.updatePassword(password, email) > 0;
+	}
+
+	@Override
+	public boolean checkEmailAndCellphone(String email, String cellphone) {
+		return accountDao.selectForReset(email, cellphone);
+	}
 }

@@ -16,8 +16,8 @@ import potel.account.service.AccountService;
 import potel.account.service.impl.AccountServiceImpl;
 import potel.account.vo.Member;
 
-@WebServlet("/member/add")
-public class AddAccountController extends HttpServlet {
+@WebServlet("/member/reset")
+public class RestPasswordController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private AccountService accountService;
 
@@ -29,19 +29,36 @@ public class AddAccountController extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json");
+		resp.setCharacterEncoding("UTF-8");
+		String email = req.getParameter("EMAIL");
+		String cellphone = req.getParameter("CELLPHONE");
+		boolean result = accountService.checkEmailAndCellphone(email, cellphone);
+		JsonObject respBody = new JsonObject();
+		respBody.addProperty("success", result);
+		respBody.addProperty("message", result ? "正確" : "不正確");
+		resp.getWriter().write(respBody.toString());
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
-
+		
 		Gson gson = new Gson();
-		Member newMember = gson.fromJson(req.getReader(), Member.class);
-		boolean isAdded = accountService.addMember(newMember);
-
+		Member member = gson.fromJson(req.getReader(), Member.class);
+		String newPassword = member.getPasswd();
+		String email = member.getEmail();
+		boolean result = accountService.updatepw(newPassword, email);
 		JsonObject respBody = new JsonObject();
-		respBody.addProperty("message", isAdded ? "Account added successfully" : "Failed to add Account");
+		respBody.addProperty("success", result);
+		respBody.addProperty("message", result ? "成功" : "失敗");
 		resp.getWriter().write(respBody.toString());
+		
 	}
 }
