@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet
-public class BookRoomOrderController extends HttpServlet{
+@WebServlet("/booking/finishorder") //新增訂單
+public class FinishOrderController extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override
