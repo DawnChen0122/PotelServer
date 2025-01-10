@@ -19,6 +19,16 @@ public interface ForumService {
 
 	boolean addComment(Comment newComment);
 
+	boolean deletePost(int postId);
 	
+	boolean deleteComment(int commentId);
+
+	void updatPostWithImage(int postId, String title, String content, Integer imageId);
+
+	void updatPostWithoutImage(int postId, String title, String content);
+
+	void updatPost(int postId, String title, String content);
+
+	void updateComment(int commentId, String content);
 
 }

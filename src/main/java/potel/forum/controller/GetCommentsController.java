@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import potel.forum.service.ForumService;
 import potel.forum.service.impl.ForumServiceImpl;
 import potel.forum.vo.Comment;
-import potel.forum.vo.Like;
 
 @WebServlet("/Forum/Comments")
 public class GetCommentsController extends HttpServlet{

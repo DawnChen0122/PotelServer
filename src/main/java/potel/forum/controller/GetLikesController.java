@@ -13,7 +13,6 @@ import com.google.gson.Gson;
 
 import potel.forum.service.ForumService;
 import potel.forum.service.impl.ForumServiceImpl;
-import potel.forum.vo.Forum;
 import potel.forum.vo.Like;
 
 @WebServlet("/Forum/Likes")
