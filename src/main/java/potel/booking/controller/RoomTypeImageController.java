@@ -18,7 +18,7 @@ import potel.booking.dao.Impl.BookingDaoImpl;
 
 
 
-@WebServlet("/api/image")
+@WebServlet("/booking/image")
 public class RoomTypeImageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
