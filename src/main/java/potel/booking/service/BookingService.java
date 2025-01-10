@@ -10,5 +10,7 @@ public interface BookingService {
 	List<RoomType> findRoomType();
 
 	List<RoomType> findRoomTypeById(int roomTypeId);
+	
+	byte[] findImageDataById(int imageId);
 
 }

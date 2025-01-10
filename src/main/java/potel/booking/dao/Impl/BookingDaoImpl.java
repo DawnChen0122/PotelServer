@@ -96,4 +96,22 @@ public class BookingDaoImpl implements BookingDao{
 		return null;
 	}
 
+	public byte[] findImageDataById(int id) {
+		String sql = "SELECT IMAGEDATA FROM IMAGES WHERE IMAGEID = ?";
+	    byte[] imageData = null;
+	    try (Connection conn = ds.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	         
+	        pstmt.setInt(1, id); // 設置查詢參數
+	        ResultSet rs = pstmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            imageData = rs.getBytes("IMAGEDATA"); // 獲取圖片數據
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return imageData;
+	}
+
 }

@@ -32,6 +32,12 @@ public class BookingServiceImpl implements BookingService{
 		return bookingDao.findRoomTypeById(roomTypeId);
 	}
 
+
+	@Override
+	public byte[] findImageDataById(int imageId) {
+		return bookingDao.findImageDataById(imageId); // 調用 DAO 方法獲取圖片數據
+	}
+
 	
 
 }
