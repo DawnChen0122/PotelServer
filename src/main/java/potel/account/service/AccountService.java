@@ -10,4 +10,6 @@ public interface AccountService {
 
 	boolean checkEmailAndCellphone(String email, String cellphone);
 
+	boolean updateac(Member member);
+
 }

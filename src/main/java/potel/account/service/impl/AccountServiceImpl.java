@@ -27,4 +27,12 @@ public class AccountServiceImpl implements AccountService {
 	public boolean checkEmailAndCellphone(String email, String cellphone) {
 		return accountDao.selectForReset(email, cellphone);
 	}
+
+	@Override
+	public boolean updateac(Member member) {
+		return accountDao.updateAccount(member) > 0;
+	}
 }
+	
+	
+

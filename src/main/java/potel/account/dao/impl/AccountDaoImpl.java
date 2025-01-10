@@ -100,5 +100,38 @@ public class AccountDaoImpl implements AccountDao {
 		}
 		return -1;
 	}
-}
 
+	@Override
+	public boolean updateac(Integer memberid, String cellphone, String address, String email, String passwd) {
+		String sql = "";
+		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql);) {
+			pstmt.setInt(1, memberid);
+			pstmt.setString(2, cellphone);
+			pstmt.setString(3, address);
+			pstmt.setString(4, email);
+			pstmt.setString(5, passwd);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				return rs.next();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public int updateAccount(Member member) {
+		String sql = "update members set cellphone = ?  address =?  email = ? passwd = ?  where memberid = ?";
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, member.getCellphone());
+			stmt.setString(2, member.getAddress());
+			stmt.setString(3, member.getEmail());
+			stmt.setString(4, member.getPasswd());
+			return stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+}

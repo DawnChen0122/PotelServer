@@ -14,4 +14,8 @@ public interface AccountDao {
 
 	int updatePassword(String password, String email);
 
+	boolean updateac(Integer memberid, String cellphone, String address, String email, String passwd);
+
+	int updateAccount(Member member);
+
 }
