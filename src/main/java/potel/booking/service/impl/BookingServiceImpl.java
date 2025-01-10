@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import potel.booking.dao.BookingDao;
 import potel.booking.dao.Impl.BookingDaoImpl;
 import potel.booking.service.BookingService;
+import potel.booking.vo.Order;
 import potel.booking.vo.RoomType;
 
 
@@ -15,7 +16,7 @@ public class BookingServiceImpl implements BookingService{
 	private BookingDao bookingDao;
 	
 	public BookingServiceImpl() throws NamingException{
-		bookingDao = new BookingDaoImpl();
+		this.bookingDao = new BookingDaoImpl();
 	}
 	
 	
@@ -36,6 +37,12 @@ public class BookingServiceImpl implements BookingService{
 	@Override
 	public byte[] findImageDataById(int imageId) {
 		return bookingDao.findImageDataById(imageId); // 調用 DAO 方法獲取圖片數據
+	}
+
+
+	@Override
+	public void createOrder(Order order) {
+        bookingDao.addOrder(order); // 調用 DAO 方法添加訂單
 	}
 
 	

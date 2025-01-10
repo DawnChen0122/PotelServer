@@ -3,8 +3,10 @@ package potel.booking.dao.Impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import potel.booking.vo.Order;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
@@ -40,16 +42,16 @@ public class BookingDaoImpl implements BookingDao{
 			while (rs.next()) {
 			    RoomType roomtype = new RoomType();
 			    
-			    roomtype.setRoomTypeId(rs.getInt("ROOMTYPEID"));
+			    roomtype.setRoomtypeid(rs.getInt("ROOMTYPEID"));
 			    roomtype.setDescpt(rs.getString("DESCPT"));
-			    roomtype.setImageId(rs.getInt("IMAGEID"));
+			    roomtype.setImageid(rs.getInt("IMAGEID"));
 			    roomtype.setPrice(rs.getInt("PRICE"));
-			    roomtype.setPetType(rs.getString("PETTYPE").charAt(0));  // 修改部分
-			    roomtype.setWeightL(rs.getInt("WEIGHTL"));
-			    roomtype.setWeightH(rs.getInt("WEIGHTH"));
+			    roomtype.setPettype(rs.getString("PETTYPE").charAt(0));  // 修改部分
+			    roomtype.setWeightl(rs.getInt("WEIGHTL"));
+			    roomtype.setWeighth(rs.getInt("WEIGHTH"));
 			    roomtype.setStatus(rs.getString("STATUS").charAt(0));     // 確認 STATUS 是否為單字符類型
-			    roomtype.setCreateDate(rs.getTimestamp("CREATEDATE"));
-			    roomtype.setModifyDate(rs.getTimestamp("MODIFYDATE"));
+			    roomtype.setCreatedate(rs.getTimestamp("CREATEDATE"));
+			    roomtype.setModifydate(rs.getTimestamp("MODIFYDATE"));
 			    list.add(roomtype);
 			}
 //			System.out.println("finish");
@@ -76,16 +78,16 @@ public class BookingDaoImpl implements BookingDao{
 			while (rs.next()) {
 			    RoomType roomtype = new RoomType();
 			    
-			    roomtype.setRoomTypeId(rs.getInt("ROOMTYPEID"));
+			    roomtype.setRoomtypeid(rs.getInt("ROOMTYPEID"));
 			    roomtype.setDescpt(rs.getString("DESCPT"));
-			    roomtype.setImageId(rs.getInt("IMAGEID"));
+			    roomtype.setImageid(rs.getInt("IMAGEID"));
 			    roomtype.setPrice(rs.getInt("PRICE"));
-			    roomtype.setPetType(rs.getString("PETTYPE").charAt(0));  // 修改部分
-			    roomtype.setWeightL(rs.getInt("WEIGHTL"));
-			    roomtype.setWeightH(rs.getInt("WEIGHTH"));
+			    roomtype.setPettype(rs.getString("PETTYPE").charAt(0));  // 修改部分
+			    roomtype.setWeightl(rs.getInt("WEIGHTL"));
+			    roomtype.setWeighth(rs.getInt("WEIGHTH"));
 			    roomtype.setStatus(rs.getString("STATUS").charAt(0));     // 確認 STATUS 是否為單字符類型
-			    roomtype.setCreateDate(rs.getTimestamp("CREATEDATE"));
-			    roomtype.setModifyDate(rs.getTimestamp("MODIFYDATE"));
+			    roomtype.setCreatedate(rs.getTimestamp("CREATEDATE"));
+			    roomtype.setModifydate(rs.getTimestamp("MODIFYDATE"));
 			    list.add(roomtype);
 			}
 //			System.out.println("selectIDfinish");
@@ -113,5 +115,35 @@ public class BookingDaoImpl implements BookingDao{
 	    }
 	    return imageData;
 	}
+
+	@Override
+	public void addOrder(Order order) {
+String sql = "INSERT INTO orders (MEMBERID, ROOMTYPEID, ROOMID, EXPDATES, EXPDATEE, DATES, DATEE, AMOUNT, REFUNDAMOUNT, PETID, ORDERSTATE, PAYMENTSTATE, REFUNDSTATE, SCORE, COMMENT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = ds.getConnection();
+    			PreparedStatement pstmt = conn.prepareStatement(sql);) {
+             
+            pstmt.setInt(1, order.getMemberid());
+            pstmt.setInt(2, order.getRoomtypeid());
+            pstmt.setInt(3, order.getRoomid());
+            pstmt.setDate(4, new java.sql.Date(order.getExpdates().getTime()));
+            pstmt.setDate(5, new java.sql.Date(order.getExpdatee().getTime()));
+            pstmt.setDate(6, new java.sql.Date(order.getDates().getTime()));
+            pstmt.setDate(7, new java.sql.Date(order.getDatee().getTime()));
+            pstmt.setInt(8, order.getAmount());
+            pstmt.setInt(9, order.getRefundamount());
+            pstmt.setInt(10, order.getPetid());
+            pstmt.setString(11, String.valueOf(order.getOrderstate()));
+            pstmt.setString(12, String.valueOf(order.getPaymentstate()));
+            pstmt.setString(13, String.valueOf(order.getRefundstate()));
+            pstmt.setInt(14, order.getScore());
+            pstmt.setString(15, order.getComment());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+	
 
 }
