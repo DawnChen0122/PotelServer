@@ -10,11 +10,11 @@ import java.util.List;
 import com.zaxxer.hikari.HikariDataSource;
 
 import potel.petsfile.dao.PetsFileDao;
-import potel.petsfile.vo.PetsFile;
+import potel.petsfile.vo.Cat;
+import potel.petsfile.vo.Dog;
 
 public class PetsFileDaoImpl implements PetsFileDao {
 
-	private static final int PetsFile = 0;
 	private HikariDataSource ds;
 
 	// 建構子，初始化數據源
@@ -27,152 +27,240 @@ public class PetsFileDaoImpl implements PetsFileDao {
 		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
 	}
 
-	// 查詢所有寵物資料
 	@Override
-	public List<PetsFile> getPetsFile() {
-
-		String sql = "SELECT * FROM pets"; // 查詢所有寵物資料
-		List<PetsFile> petsList = new ArrayList<>();
+	public List<Dog> selectDog() {
+		String sql = "SELECT * FROM dog"; // 查詢 dog 表格中的所有資料
+		List<Dog> dogs = new ArrayList<>(); // 用來儲存查詢結果
 
 		try (Connection conn = ds.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				ResultSet rs = pstmt.executeQuery()) {
 
-			System.out.println("數據庫連接已建立。");
+			System.out.println("Database connection established.");
 
-			// 遍歷結果集，將每一筆資料封裝成 PetsFile 物件
 			while (rs.next()) {
-				PetsFile pet = new PetsFile();
-				pet.setPetId(rs.getInt("PETID"));
-				pet.setPetType(rs.getString("PETTYPE"));
-				pet.setNickname(rs.getString("NICKNAME"));
-				pet.setWeight(rs.getDouble("WEIGHT"));
-				pet.setBreed(rs.getString("BREED"));
-				pet.setImageId(rs.getInt("IMAGEID"));
-				pet.setStatus(rs.getString("STATUS"));
-				pet.setCreatedDate(rs.getTimestamp("CREATEDATE"));
-				pet.setModifyDate(rs.getTimestamp("MODIFYDATE"));
-				petsList.add(pet);
+				Object temp = null;
+				Dog dog = new Dog();
+
+				// 設置每一隻狗的資料
+				dog.setDogOwner(rs.getString("DOGOWNER"));
+				dog.setDogId(rs.getInt("DOGID"));
+				dog.setDogName(rs.getString("DOGNAME"));
+				dog.setDogBreed(rs.getString("DOGBREED"));
+				dog.setDogGender(rs.getString("DOGGENDER"));
+				dog.setDogImages(rs.getInt("DOGIMAGES"));
+
+				dogs.add(dog); // 將 Dog 物件加入列表
+
+				// 可選：在控制台輸出每隻狗的資料
+				System.out.println("DOGID: " + dog.getDogId() + ", DOGNAME: " + dog.getDogName());
 			}
 
-			System.out.println("成功從資料庫取得 " + petsList.size() + " 隻寵物資料。");
-		} catch (SQLException e) {
-	        e.printStackTrace(); // 打印錯誤日誌
-	        throw new RuntimeException("Error fetching pets from database", e);
-	    }
-	    return petsList;
+			System.out.println("Fetched " + dogs.size() + " dogs from the database.");
+		} catch (Exception e) {
+			e.printStackTrace(); // 處理 SQL 異常
+		}
+
+		// 如果沒有查詢到資料，返回 null；否則返回查詢結果列表
+		return dogs.isEmpty() ? null : dogs;
 	}
 
-	// 根據寵物 ID 查詢單隻寵物資料
 	@Override
-	public PetsFile selectFileById(int id) {
+	public List<Cat> selectCat() {
+		String sql = "SELECT * FROM cat"; // 查詢 cat 表格中的所有資料
+		List<Cat> cats = new ArrayList<>(); // 用來儲存查詢結果
 
-		String sql = "SELECT * FROM pets WHERE PETID = ?";
-		PetsFile pet = null;
+		try (Connection conn = ds.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				ResultSet rs = pstmt.executeQuery()) {
 
-		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, id); // 設定查詢的 PETID
+			System.out.println("Database connection established.");
 
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					pet = new PetsFile();
-					pet.setPetId(rs.getInt("PETID"));
-					pet.setPetType(rs.getString("PETTYPE"));
-					pet.setNickname(rs.getString("NICKNAME"));
-					pet.setWeight(rs.getDouble("WEIGHT"));
-					pet.setBreed(rs.getString("BREED"));
-					pet.setImageId(rs.getInt("IMAGEID"));
-					pet.setStatus(rs.getString("STATUS"));
-					pet.setCreatedDate(rs.getTimestamp("CREATEDATE"));
-					pet.setModifyDate(rs.getTimestamp("MODIFYDATE"));
-				}
+			while (rs.next()) {
+				Object temp = null;
+				Cat cat = new Cat();
+
+				// 設置每一隻貓的資料
+				cat.setCatOwner(rs.getString("CATOWNER"));
+				cat.setCatId(rs.getInt("CATID"));
+				cat.setCatName(rs.getString("CATNAME"));
+				cat.setCatBreed(rs.getString("CATBREED"));
+				cat.setCatGender(rs.getString("CATGENDER"));
+				cat.setCatImages(rs.getInt("CATIMAGES"));
+
+				cats.add(cat); // 將 Cat 物件加入列表
+
+				// 可選：在控制台輸出每隻貓的資料
+				System.out.println("CATID: " + cat.getCatId() + ", CATNAME: " + cat.getCatName());
 			}
 
-			if (pet != null) {
-				System.out.println("成功從資料庫取得一隻寵物資料。");
+			System.out.println("Fetched " + cats.size() + " cats from the database.");
+		} catch (Exception e) {
+			e.printStackTrace(); // 處理 SQL 異常
+		}
+
+		// 如果沒有查詢到資料，返回 null；否則返回查詢結果列表
+		return cats.isEmpty() ? null : cats;
+	}
+
+	@Override
+	public void addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
+		String sql = "INSERT INTO dog (DOGOWNER, DOGNAME, DOGBREED, DOGGENDER, DOGIMAGES) VALUES (?, ?, ?, ?, ?)"; // 不需要
+																													// DOGID，會自動生成
+
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			// 設置資料庫查詢參數
+			stmt.setString(1, dogOwner);
+			stmt.setString(2, dogName);
+			stmt.setString(3, dogBreed);
+			stmt.setString(4, dogGender);
+
+			// 處理 DOGIMAGES 參數，根據條件設置
+			if (dogImages > 0) {
+				stmt.setInt(5, dogImages); // 如果提供了圖片ID，設置為非 null
 			} else {
-				System.out.println("未找到對應的寵物資料。");
+				stmt.setNull(5, java.sql.Types.INTEGER); // 如果沒有圖片ID，設置為 null
 			}
-		} catch (SQLException e) {
-			// 發生錯誤時，打印錯誤堆疊資訊
-			e.printStackTrace();
-		}
 
-		return pet;
+			// 執行插入操作
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace(); // 錯誤處理
+		}
 	}
 
-	// 新增一隻寵物資料
 	@Override
-	public boolean insertFile(PetsFile petsFile) {
-		String sql = "INSERT INTO PETSFILE (PETTYPE, NICKNAME, WEIGHT, BREED, IMAGEID, STATUS, CREATEDDATE, MODIFYDATE) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	public void addCat(String catOwner, String catName, String catBreed, String catGender, int catImages) {
+		String sql = "INSERT INTO cat (CATOWNER, CATNAME, CATBREED, CATGENDER, CATIMAGES) VALUES (?, ?, ?, ?, ?)"; // 不需要
+																													// CATID，會自動生成
+
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			// 設置資料庫查詢參數
+			stmt.setString(1, catOwner);
+			stmt.setString(2, catName);
+			stmt.setString(3, catBreed);
+			stmt.setString(4, catGender);
+
+			// 處理 CATIMAGES 參數，根據條件設置
+			if (catImages > 0) {
+				stmt.setInt(5, catImages); // 如果提供了圖片ID，設置為非 null
+			} else {
+				stmt.setNull(5, java.sql.Types.INTEGER); // 如果沒有圖片ID，設置為 null
+			}
+
+			// 執行插入操作
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace(); // 錯誤處理
+		}
+	}
+
+	@Override
+	public boolean deleteDog(int dogId) {
+		String sql = "DELETE FROM dog WHERE DOGID = ?"; // 使用 DOGID 刪除資料
 
 		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-			pstmt.setString(1, petsFile.getPetType());
-			pstmt.setString(2, petsFile.getNickname());
-			pstmt.setDouble(3, petsFile.getWeight());
-			pstmt.setString(4, petsFile.getBreed());
-			pstmt.setInt(5, petsFile.getImageId());
-			pstmt.setString(6, petsFile.getStatus());
-			pstmt.setTimestamp(7, petsFile.getCreatedDate());
-			pstmt.setTimestamp(8, petsFile.getModifyDate());
+			pstmt.setInt(1, dogId); // 設置 DOGID 參數
 
-			int rowsAffected = pstmt.executeUpdate();
-			return rowsAffected > 0;
+			// 執行刪除操作，並檢查受影響的行數
+			int affectedRows = pstmt.executeUpdate();
 
-		} catch (SQLException e) {
-			// 發生錯誤時，打印錯誤堆疊資訊
-			e.printStackTrace();
+			// 如果有刪除的行，返回 true，否則返回 false
+			return affectedRows > 0;
+
+		} catch (Exception e) {
+			e.printStackTrace(); // 捕獲並輸出錯誤信息
+			return false; // 出現錯誤時返回 false
 		}
-
-		return false;
 	}
 
-	// 更新一隻寵物資料
 	@Override
-	public boolean updateFile(PetsFile petsFile) {
-		String sql = "UPDATE PETSFILE SET PETTYPE = ?, NICKNAME = ?, WEIGHT = ?, BREED = ?, IMAGEID = ?, STATUS = ?, "
-				+ "MODIFYDATE = ? WHERE PETID = ?";
+	public boolean deleteCat(int catId) {
+		String sql = "DELETE FROM cat WHERE CATID = ?"; // 使用 CATID 刪除資料
 
 		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-			pstmt.setString(1, petsFile.getPetType());
-			pstmt.setString(2, petsFile.getNickname());
-			pstmt.setDouble(3, petsFile.getWeight());
-			pstmt.setString(4, petsFile.getBreed());
-			pstmt.setInt(5, petsFile.getImageId());
-			pstmt.setString(6, petsFile.getStatus());
-			pstmt.setTimestamp(7, petsFile.getModifyDate());
-			pstmt.setInt(8, petsFile.getPetId());
+			pstmt.setInt(1, catId); // 設置 CATID 參數
 
-			int rowsAffected = pstmt.executeUpdate();
-			return rowsAffected > 0;
+			// 執行刪除操作，並檢查受影響的行數
+			int affectedRows = pstmt.executeUpdate();
 
-		} catch (SQLException e) {
-			// 發生錯誤時，打印錯誤堆疊資訊
-			e.printStackTrace();
+			// 如果有刪除的行，返回 true，否則返回 false
+			return affectedRows > 0;
+
+		} catch (Exception e) {
+			e.printStackTrace(); // 捕獲並輸出錯誤信息
+			return false; // 出現錯誤時返回 false
 		}
-
-		return false;
 	}
 
-	// 刪除一隻寵物資料
 	@Override
-	public boolean deleteFile(int id) {
-		String sql = "DELETE FROM PETSFILE WHERE PETID = ?";
+	public void updateDog(int dogId, String dogOwner, String dogName, String dogBreed, String dogGender,
+			int dogImages) {
+		System.out.println("UPDATE SQL for Dog");
 
-		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, PetsFile); // 設定要刪除的 PETID
+		// 定義 SQL 更新語句
+		String sql = "UPDATE dog SET DOGOWNER = ?, DOGNAME = ?, DOGBREED = ?, DOGGENDER = ?, DOGIMAGES = ? WHERE DOGID = ?";
 
-			int rowsAffected = pstmt.executeUpdate();
-			return rowsAffected > 0;
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-		} catch (SQLException e) {
-			// 發生錯誤時，打印錯誤堆疊資訊
-			e.printStackTrace();
+			// 設置更新語句中的參數
+			stmt.setString(1, dogOwner); // DOGOWNER
+			stmt.setString(2, dogName); // DOGNAME
+			stmt.setString(3, dogBreed); // DOGBREED
+			stmt.setString(4, dogGender); // DOGGENDER
+
+			// 處理 DOGIMAGES，設置圖片ID或null
+			if (dogImages > 0) {
+				stmt.setInt(5, dogImages); // 設置有效的圖片ID
+			} else {
+				stmt.setNull(5, java.sql.Types.INTEGER); // 設置為null
+			}
+
+			// 設置要更新的DOGID
+			stmt.setInt(6, dogId); // DOGID 用於識別需要更新的資料
+
+			// 執行更新操作
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace(); // 處理SQL異常
 		}
-
-		return false;
 	}
+
+	@Override
+	public void updateCat(int catId, String catOwner, String catName, String catBreed, String catGender,
+			int catImages) {
+		System.out.println("UPDATE SQL for Cat");
+
+		// 定義 SQL 更新語句
+		String sql = "UPDATE cat SET CATOWNER = ?, CATNAME = ?, CATBREED = ?, CATGENDER = ?, CATIMAGES = ? WHERE CATID = ?";
+
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			// 設置更新語句中的參數
+			stmt.setString(1, catOwner); // CATOWNER
+			stmt.setString(2, catName); // CATNAME
+			stmt.setString(3, catBreed); // CATBREED
+			stmt.setString(4, catGender); // CATGENDER
+
+			// 處理 CATIMAGES，設置圖片ID或null
+			if (catImages > 0) {
+				stmt.setInt(5, catImages); // 設置有效的圖片ID
+			} else {
+				stmt.setNull(5, java.sql.Types.INTEGER); // 設置為null
+			}
+
+			// 設置要更新的CATID
+			stmt.setInt(6, catId); // CATID 用於識別需要更新的資料
+
+			// 執行更新操作
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace(); // 處理SQL異常
+		}
+	}
+
 }
