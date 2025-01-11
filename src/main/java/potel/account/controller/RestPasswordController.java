@@ -37,6 +37,7 @@ public class RestPasswordController extends HttpServlet {
 		resp.setCharacterEncoding("UTF-8");
 		String email = req.getParameter("EMAIL");
 		String cellphone = req.getParameter("CELLPHONE");
+		System.out.printf(email,cellphone);
 		boolean result = accountService.checkEmailAndCellphone(email, cellphone);
 		JsonObject respBody = new JsonObject();
 		respBody.addProperty("success", result);
@@ -49,7 +50,7 @@ public class RestPasswordController extends HttpServlet {
 		req.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
-		
+		System.out.printf("doPut");
 		Gson gson = new Gson();
 		Member member = gson.fromJson(req.getReader(), Member.class);
 		
@@ -57,6 +58,9 @@ public class RestPasswordController extends HttpServlet {
 //		String newPassword = req.getParameter("PASSWORD");
 		String newPassword = member.getPasswd();
 		String email = member.getEmail();
+		System.out.println("email: "+email);
+		System.out.println("newPassword: "+newPassword);
+
 		boolean result = accountService.updatepw(newPassword, email);
 		JsonObject respBody = new JsonObject();
 		respBody.addProperty("success", result);
