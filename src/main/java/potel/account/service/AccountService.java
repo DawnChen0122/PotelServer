@@ -9,7 +9,11 @@ public interface AccountService {
 	boolean updatepw(String password, String email);
 
 	boolean checkEmailAndCellphone(String email, String cellphone);
+	
+	boolean login(String input, String password);
 
 	boolean updateac(Member member);
+	
+
 
 }

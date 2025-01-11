@@ -32,7 +32,21 @@ public class AccountServiceImpl implements AccountService {
 	public boolean updateac(Member member) {
 		return accountDao.updateAccount(member) > 0;
 	}
+
+	@Override
+	public boolean login(String input, String password) {
+		if (input ==null || input.isEmpty()) {
+			return false;
+		}
+		if (password ==null || password.isEmpty()) {
+			return false;
+		}
+		return accountDao.selectMemeber(input, password);
+	}
+
+
 }
+
 	
 	
 

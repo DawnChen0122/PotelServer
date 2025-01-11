@@ -134,4 +134,20 @@ public class AccountDaoImpl implements AccountDao {
 		return -1;
 	}
 
+	@Override
+	public boolean selectMemeber(String input, String password) {
+		String sql = "SELECT 1 FROM members Where (EMAIL = ?  or  CELLPHONE = ?)  and PASSWD = ?";
+		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql);) {
+			pstmt.setString(1, input);
+			pstmt.setString(2, input);
+			pstmt.setString(3,  password);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				return rs.next();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

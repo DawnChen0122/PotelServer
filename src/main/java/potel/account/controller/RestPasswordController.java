@@ -45,13 +45,16 @@ public class RestPasswordController extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 		
 		Gson gson = new Gson();
 		Member member = gson.fromJson(req.getReader(), Member.class);
+		
+//		String email = req.getParameter("EMAIL");
+//		String newPassword = req.getParameter("PASSWORD");
 		String newPassword = member.getPasswd();
 		String email = member.getEmail();
 		boolean result = accountService.updatepw(newPassword, email);
