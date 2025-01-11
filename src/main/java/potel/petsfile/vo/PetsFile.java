@@ -11,7 +11,7 @@ public class PetsFile {
     private String breed;
     private int imageId;
     private String status;
-    private Timestamp createdDate;
+    private Timestamp createDate;
     private Timestamp modifyDate;
 
     // Getter 和 Setter 方法
@@ -73,11 +73,11 @@ public class PetsFile {
     }
 
     public Timestamp getCreatedDate() {
-        return createdDate;
+        return createDate;
     }
 
     public void setCreatedDate(Timestamp createdDate) {
-        this.createdDate = createdDate;
+        this.createDate = createdDate;
     }
 
     public Timestamp getModifyDate() {
