@@ -9,21 +9,25 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import potel.shopping.Service.Impl.ListServiceImpl;
+import com.google.gson.Gson;
+
+import potel.shopping.Service.Impl.ShopServiceImpl;
 import potel.shopping.Vo.Product;
 
 
-@WebServlet("/shopping/Information")
-public class InformationController extends HttpServlet {
+@WebServlet("/shopping/Product")
+public class ProductController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("doGet");
-        try {
-   
-//        	InformationServiceImpl service = new InformationServiceImpl();
-//             List<Product> products = service.selectAll();
+		
+		String prdId = req.getParameter("prdId");
+		System.out.println("ProductController prdId=" + prdId);
+		try {
+        	 ShopServiceImpl service = new ShopServiceImpl();
+             Product product = service.getProduct(Integer.parseInt(prdId));
 
             // 將產品列表轉換為 JSON
              
@@ -31,10 +35,9 @@ public class InformationController extends HttpServlet {
              
             // 將 JSON 回傳給前端
              
-//            resp.getWriter().write(json);
+            resp.getWriter().write(new Gson().toJson(product, Product.class));
         } catch (Exception e) {
             e.printStackTrace();
-         
         }
     }
 }

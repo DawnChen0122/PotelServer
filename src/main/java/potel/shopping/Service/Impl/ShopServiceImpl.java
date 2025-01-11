@@ -4,21 +4,22 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import potel.shopping.Dao.ListDao;
-import potel.shopping.Dao.Impl.ListDaoImpl;
-import potel.shopping.Service.ListService;
+import potel.shopping.Dao.ShopDao;
+import potel.shopping.Dao.Impl.ShopDaoImpl;
+import potel.shopping.Service.ShopService;
+import potel.shopping.Vo.OrderRequest;
 import potel.shopping.Vo.Product;
 
-public class ListServiceImpl implements ListService {
+public class ShopServiceImpl implements ShopService {
 
-	private ListDao listDao;
+	private ShopDao listDao;
 
-	public ListServiceImpl() throws NamingException{
-		listDao = new ListDaoImpl();
+	public ShopServiceImpl() throws NamingException{
+		listDao = new ShopDaoImpl();
 	}
 
 	@Override
-	public List<Product> selectAll(String prdtype) {
+	public List<Product> selectAll(String prdtype) throws NamingException {
 		// TODO Auto-generated method stub
 		if(prdtype==null) {
 			System.out.println("未傳入參數(" + prdtype + ")");
@@ -31,14 +32,16 @@ public class ListServiceImpl implements ListService {
 	}
 
 	@Override
-	public Product getProductInfomation(int product_id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Product getProduct(int prdId) throws NamingException {
+		
+		return listDao.select(prdId);
 	}
 
 	@Override
-	public Boolean insertOrder() {
+	public int insertOrder(OrderRequest orderRequest) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
+
+
 }

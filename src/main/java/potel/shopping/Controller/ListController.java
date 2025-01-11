@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import potel.shopping.Service.Impl.ListServiceImpl;
+import potel.shopping.Service.Impl.ShopServiceImpl;
 import potel.shopping.Vo.Product;
 
 
@@ -26,7 +26,7 @@ public class ListController extends HttpServlet {
 		String prdtype = req.getParameter("prdtype");
 		System.out.println("ListController prdtype=" + prdtype);
 		try {
-        	 ListServiceImpl service = new ListServiceImpl();
+        	 ShopServiceImpl service = new ShopServiceImpl();
              List<Product> products = service.selectAll(prdtype);
 
              // 將產品列表轉換為 JSON
