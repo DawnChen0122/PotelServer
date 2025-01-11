@@ -23,7 +23,7 @@ public class FindRoomTypeController extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	    try {
-	        String roomTypeIdParam = req.getParameter("roomTypeId"); // 獲取參數
+	        String roomTypeIdParam = req.getParameter("roomtypeid"); // 獲取參數
 	        
 	        BookingService service = new BookingServiceImpl(); // 實例化service
 	        
