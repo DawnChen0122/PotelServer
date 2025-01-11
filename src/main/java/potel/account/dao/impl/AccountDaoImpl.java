@@ -135,19 +135,34 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean selectMemeber(String input, String password) {
-		String sql = "SELECT 1 FROM members Where (EMAIL = ?  or  CELLPHONE = ?)  and PASSWD = ?";
-		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql);) {
+	public Member selectMemeber(String input, String password)  {
+		String sql = "SELECT * FROM members Where (EMAIL = ?  or  CELLPHONE = ?)  and PASSWD = ?";
+		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
 			pstmt.setString(1, input);
 			pstmt.setString(2, input);
-			pstmt.setString(3,  password);
-			try (ResultSet rs = pstmt.executeQuery()) {
-				return rs.next();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+			pstmt.setString(3, password);
 
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					Member member = new Member();
+					member.setMemberid(rs.getInt("MEMBERID"));
+					member.setName(rs.getString("NAME"));
+					member.setCellphone(rs.getString("CELLPHONE"));
+					member.setAddress(rs.getString("ADDRESS"));
+					member.setGender(rs.getString("GENDER").charAt(0));
+					member.setBirthday(rs.getString("BIRTHDAY"));
+					member.setEmail(rs.getString("EMAIL"));
+					member.setPasswd(rs.getString("PASSWD"));
+					member.setImageid(rs.getInt("IMAGEID"));
+			           return member;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        // 這裡捕獲 SQLException 並處理
+	        e.printStackTrace();
+	    }
+
+	    return null; // 如果沒有找到對應的會員
+	}
 }

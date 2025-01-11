@@ -1,6 +1,7 @@
 package potel.account.controller;
 
 import java.io.IOException;
+import java.nio.channels.Pipe.SourceChannel;
 
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -37,11 +38,15 @@ public class LoginAccountController extends HttpServlet {
 			resp.setCharacterEncoding("UTF-8");
 			String input = req.getParameter("INPUT");
 			String passwd = req.getParameter("PASSWORD");
-			boolean result = accountService.login(input,passwd);
-			JsonObject respBody = new JsonObject();
-			respBody.addProperty("success", result);
-			respBody.addProperty("message", result ? "正確" : "不正確");
-			resp.getWriter().write(respBody.toString());
+			System.out.println("input(" + input + "," + passwd + ")");
+			Member result = accountService.login(input,passwd);
+//			JsonObject respBody = new JsonObject();
+////			respBody.addProperty("success", result);
+////			respBody.addProperty("message", result ? "正確" : "不正確");
+//			respBody.
+//			String res = respBody.toString();
+//			System.out.println("input(" + input + "," + passwd + ")==>" + res);
+			resp.getWriter().write(new Gson().toJson(result, Member.class));
 		}
 
 }

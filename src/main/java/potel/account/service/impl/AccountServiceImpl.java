@@ -34,12 +34,12 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean login(String input, String password) {
+	public Member login(String input, String password) {
 		if (input ==null || input.isEmpty()) {
-			return false;
+			return null;
 		}
 		if (password ==null || password.isEmpty()) {
-			return false;
+			return null;
 		}
 		return accountDao.selectMemeber(input, password);
 	}

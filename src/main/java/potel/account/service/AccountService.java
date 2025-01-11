@@ -10,7 +10,7 @@ public interface AccountService {
 
 	boolean checkEmailAndCellphone(String email, String cellphone);
 	
-	boolean login(String input, String password);
+	Member login(String input, String password);
 
 	boolean updateac(Member member);
 	

@@ -18,6 +18,8 @@ public interface AccountDao {
 
 	int updateAccount(Member member);
 
-	boolean selectMemeber (String input, String password);
+	Member selectMemeber(String input, String password) ;
+
+	
 	
 }
