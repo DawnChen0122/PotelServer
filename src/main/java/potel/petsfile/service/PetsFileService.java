@@ -6,13 +6,9 @@ import potel.petsfile.vo.PetsFile;
 
 public interface PetsFileService {
 	List<PetsFile> getPetsFile();
+	PetsFile selectFileById(int id);
+	boolean insertFile(PetsFile petsFile);
+	boolean updateFile(PetsFile petsFile);
+	boolean deleteFile(int id);
 
-	static void addpetsFile(PetsFile newPetsFile) {
-	}
-
-	static void deletePet(String petId) {
-	}
-
-	static void updatePet(PetsFile updatedPet) {
-	}
 }
