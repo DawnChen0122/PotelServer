@@ -38,7 +38,7 @@ public class AccountDaoImpl implements AccountDao {
 				member.setName(rs.getString("name"));
 				member.setCellphone(rs.getString("cellphone"));
 				member.setAddress(rs.getString("address"));
-				member.setBirthday(rs.getString("birthday"));
+//				member.setBirthday(rs.getString("birthday"));
 				member.setEmail(rs.getString("email"));
 				member.setPasswd(rs.getString("passwd"));
 				members.add(member);
@@ -55,17 +55,17 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean insertMember(Member member) {
-		String sql = "INSERT INTO members (name, cellphone, address, gender, birthday, email, passwd, imageid) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO members (name, cellphone, address ,gender , email, passwd ) "
+				+ "VALUES (?, ?, ?, ?, ?, ?)";
 		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, member.getName());
 			stmt.setString(2, member.getCellphone());
 			stmt.setString(3, member.getAddress());
 			stmt.setString(4, member.getGender() != null ? member.getGender().toString() : null);
-			stmt.setString(5, member.getBirthday());
-			stmt.setString(6, member.getEmail());
-			stmt.setString(7, member.getPasswd());
-			stmt.setInt(8, member.getImageid());
+//			stmt.setString(5, member.getBirthday());
+			stmt.setString(5, member.getEmail());
+			stmt.setString(6, member.getPasswd());
+//			stmt.setInt(7, member.getImageid());
 			return stmt.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -146,12 +146,12 @@ public class AccountDaoImpl implements AccountDao {
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					Member member = new Member();
-					member.setMemberid(rs.getInt("MEMBERID"));
+//					member.setMemberid(rs.getInt("MEMBERID"));
 					member.setName(rs.getString("NAME"));
 					member.setCellphone(rs.getString("CELLPHONE"));
 					member.setAddress(rs.getString("ADDRESS"));
-					member.setGender(rs.getString("GENDER").charAt(0));
-					member.setBirthday(rs.getString("BIRTHDAY"));
+//					member.setGender(rs.getString("GENDER").charAt(0));
+//					member.setBirthday(rs.getString("BIRTHDAY"));
 					member.setEmail(rs.getString("EMAIL"));
 					member.setPasswd(rs.getString("PASSWD"));
 					member.setImageid(rs.getInt("IMAGEID"));
