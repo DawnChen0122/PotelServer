@@ -21,7 +21,7 @@ public class PetsFileDaoImpl implements PetsFileDao {
 	public PetsFileDaoImpl() {
 		// 建議將數據源配置移到配置類中
 		ds = new HikariDataSource();
-		ds.setJdbcUrl("jdbc:mysql://114.32.203.170:3306/group");
+		ds.setJdbcUrl("jdbc:mysql://114.32.203.170:3306/Potel");
 		ds.setUsername("root");
 		ds.setPassword("TIP102_25541859101");
 		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
