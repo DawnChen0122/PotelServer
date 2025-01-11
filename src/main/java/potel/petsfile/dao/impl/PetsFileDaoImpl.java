@@ -29,10 +29,10 @@ public class PetsFileDaoImpl implements PetsFileDao {
 
 	// 查詢所有寵物資料
 	@Override
-	public List<PetsFile> selectAllFiles() {
+	public List<PetsFile> getPetsFile() {
 
-		String sql = "SELECT * FROM PETSFILE"; // 查詢所有寵物資料
-		List<PetsFile> pets = new ArrayList<>();
+		String sql = "SELECT * FROM pets"; // 查詢所有寵物資料
+		List<PetsFile> petsList = new ArrayList<>();
 
 		try (Connection conn = ds.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -50,29 +50,28 @@ public class PetsFileDaoImpl implements PetsFileDao {
 				pet.setBreed(rs.getString("BREED"));
 				pet.setImageId(rs.getInt("IMAGEID"));
 				pet.setStatus(rs.getString("STATUS"));
-				pet.setCreatedDate(rs.getTimestamp("CREATEDDATE"));
+				pet.setCreatedDate(rs.getTimestamp("CREATEDATE"));
 				pet.setModifyDate(rs.getTimestamp("MODIFYDATE"));
-				pets.add(pet);
+				petsList.add(pet);
 			}
 
-			System.out.println("成功從資料庫取得 " + pets.size() + " 隻寵物資料。");
+			System.out.println("成功從資料庫取得 " + petsList.size() + " 隻寵物資料。");
 		} catch (SQLException e) {
-			// 發生錯誤時，打印錯誤堆疊資訊
-			e.printStackTrace();
-		}
-
-		return pets.isEmpty() ? null : pets;
+	        e.printStackTrace(); // 打印錯誤日誌
+	        throw new RuntimeException("Error fetching pets from database", e);
+	    }
+	    return petsList;
 	}
 
 	// 根據寵物 ID 查詢單隻寵物資料
 	@Override
 	public PetsFile selectFileById(int id) {
 
-		String sql = "SELECT * FROM PETSFILE WHERE PETID = ?";
+		String sql = "SELECT * FROM pets WHERE PETID = ?";
 		PetsFile pet = null;
 
 		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, PetsFile); // 設定查詢的 PETID
+			pstmt.setInt(1, id); // 設定查詢的 PETID
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
@@ -84,7 +83,7 @@ public class PetsFileDaoImpl implements PetsFileDao {
 					pet.setBreed(rs.getString("BREED"));
 					pet.setImageId(rs.getInt("IMAGEID"));
 					pet.setStatus(rs.getString("STATUS"));
-					pet.setCreatedDate(rs.getTimestamp("CREATEDDATE"));
+					pet.setCreatedDate(rs.getTimestamp("CREATEDATE"));
 					pet.setModifyDate(rs.getTimestamp("MODIFYDATE"));
 				}
 			}

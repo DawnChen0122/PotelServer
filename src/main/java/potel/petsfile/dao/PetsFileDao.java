@@ -5,7 +5,7 @@ import java.util.List;
 import potel.petsfile.vo.PetsFile;
 
 public interface PetsFileDao {
-	List<PetsFile> selectAllFiles();
+	List<PetsFile> getPetsFile();
 
 	// 根据ID查询宠物文件
 	PetsFile selectFileById(int id);

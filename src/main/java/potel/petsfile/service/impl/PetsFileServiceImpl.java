@@ -18,7 +18,7 @@ public class PetsFileServiceImpl implements PetsFileService {
 	@Override
 	public List<PetsFile> getPetsFile() {
 		System.out.println("PetsFile service get petsFile");
-		List<PetsFile> petsFiles = petsFileDao.selectAllFiles();
+		List<PetsFile> petsFiles = petsFileDao.getPetsFile();
 		System.out.println("Retrieved petsFiles: " + petsFiles.size()); // 打印返回的論壇數量
 		return petsFiles;
 	}
