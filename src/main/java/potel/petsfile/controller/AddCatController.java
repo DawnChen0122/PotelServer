@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import potel.petsfile.service.PetsFileService;
 import potel.petsfile.service.impl.PetsFileServiceImpl;
+import potel.petsfile.vo.Cat;
 
 @WebServlet("/PetsFile/AddCat")
 public class AddCatController extends HttpServlet {
@@ -45,8 +46,15 @@ public class AddCatController extends HttpServlet {
 	        Gson gson = new Gson();
 	        Cat newCat = gson.fromJson(jsonRequest.toString(), Cat.class);  // 反序列化 JSON 為 Comment 對象
 
-	        // 呼叫 Service 層來處理新增留言
-	        boolean isAdded = petsfileService.addCat(newCat);
+	        // 获取 Dog 对象的各个字段
+	        String catOwner = newCat.getCatOwner();
+	        String catName = newCat.getCatName();
+	        String catBreed = newCat.getCatBreed();
+	        String catGender = newCat.getCatGender();
+	        int catImages = newCat.getCatImages();  // 可为 0 或其他有效值
+
+	        // 调用 Service 层来处理添加 Dog
+	        boolean isAdded = petsfileService.addCat(catOwner, catName, catBreed, catGender, catImages);
 
 	        // 構建回應
 	        PrintWriter out = resp.getWriter();

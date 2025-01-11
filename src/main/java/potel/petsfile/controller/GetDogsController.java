@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import potel.petsfile.service.PetsFileService;
 import potel.petsfile.service.impl.PetsFileServiceImpl;
+import potel.petsfile.vo.Dog;
 
 @WebServlet("/PetsFile/Dogs")
 public class GetDogsController extends HttpServlet{

@@ -10,9 +10,9 @@ public interface PetsFileDao {
     
     List<Cat> selectCat();
 
-    void addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages);
+    boolean addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages);
     
-    void addCat(String catOwner, String catName, String catBreed, String catGender, int catImages);
+    boolean addCat(String catOwner, String catName, String catBreed, String catGender, int catImages);
 
     boolean deleteDog(int dogId);
 

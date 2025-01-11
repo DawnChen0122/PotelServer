@@ -104,58 +104,61 @@ public class PetsFileDaoImpl implements PetsFileDao {
 	}
 
 	@Override
-	public void addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
-		String sql = "INSERT INTO dog (DOGOWNER, DOGNAME, DOGBREED, DOGGENDER, DOGIMAGES) VALUES (?, ?, ?, ?, ?)"; // 不需要
-																													// DOGID，會自動生成
+	public boolean addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
+	    String sql = "INSERT INTO dog (DOGOWNER, DOGNAME, DOGBREED, DOGGENDER, DOGIMAGES) VALUES (?, ?, ?, ?, ?)"; // 不需要 DOGID，會自動生成
 
-		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+	    try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-			// 設置資料庫查詢參數
-			stmt.setString(1, dogOwner);
-			stmt.setString(2, dogName);
-			stmt.setString(3, dogBreed);
-			stmt.setString(4, dogGender);
+	        // 設置資料庫查詢參數
+	        stmt.setString(1, dogOwner);
+	        stmt.setString(2, dogName);
+	        stmt.setString(3, dogBreed);
+	        stmt.setString(4, dogGender);
 
-			// 處理 DOGIMAGES 參數，根據條件設置
-			if (dogImages > 0) {
-				stmt.setInt(5, dogImages); // 如果提供了圖片ID，設置為非 null
-			} else {
-				stmt.setNull(5, java.sql.Types.INTEGER); // 如果沒有圖片ID，設置為 null
-			}
+	        // 處理 DOGIMAGES 參數，根據條件設置
+	        if (dogImages > 0) {
+	            stmt.setInt(5, dogImages); // 如果提供了圖片ID，設置為非 null
+	        } else {
+	            stmt.setNull(5, java.sql.Types.INTEGER); // 如果沒有圖片ID，設置為 null
+	        }
 
-			// 執行插入操作
-			stmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace(); // 錯誤處理
-		}
+	        // 執行插入操作
+	        int affectedRows = stmt.executeUpdate();
+	        return affectedRows > 0; // 如果受影響的行數大於 0，表示操作成功，返回 true
+	    } catch (Exception e) {
+	        e.printStackTrace(); // 錯誤處理
+	        return false; // 出現異常時返回 false
+	    }
 	}
 
 	@Override
-	public void addCat(String catOwner, String catName, String catBreed, String catGender, int catImages) {
-		String sql = "INSERT INTO cat (CATOWNER, CATNAME, CATBREED, CATGENDER, CATIMAGES) VALUES (?, ?, ?, ?, ?)"; // 不需要
-																													// CATID，會自動生成
+	public boolean addCat(String catOwner, String catName, String catBreed, String catGender, int catImages) {
+	    String sql = "INSERT INTO cat (CATOWNER, CATNAME, CATBREED, CATGENDER, CATIMAGES) VALUES (?, ?, ?, ?, ?)"; // 不需要 CATID，會自動生成
 
-		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+	    try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-			// 設置資料庫查詢參數
-			stmt.setString(1, catOwner);
-			stmt.setString(2, catName);
-			stmt.setString(3, catBreed);
-			stmt.setString(4, catGender);
+	        // 設置資料庫查詢參數
+	        stmt.setString(1, catOwner);
+	        stmt.setString(2, catName);
+	        stmt.setString(3, catBreed);
+	        stmt.setString(4, catGender);
 
-			// 處理 CATIMAGES 參數，根據條件設置
-			if (catImages > 0) {
-				stmt.setInt(5, catImages); // 如果提供了圖片ID，設置為非 null
-			} else {
-				stmt.setNull(5, java.sql.Types.INTEGER); // 如果沒有圖片ID，設置為 null
-			}
+	        // 處理 CATIMAGES 參數，根據條件設置
+	        if (catImages > 0) {
+	            stmt.setInt(5, catImages); // 如果提供了圖片ID，設置為非 null
+	        } else {
+	            stmt.setNull(5, java.sql.Types.INTEGER); // 如果沒有圖片ID，設置為 null
+	        }
 
-			// 執行插入操作
-			stmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace(); // 錯誤處理
-		}
+	        // 執行插入操作
+	        int affectedRows = stmt.executeUpdate();
+	        return affectedRows > 0; // 如果受影響的行數大於 0，表示操作成功，返回 true
+	    } catch (Exception e) {
+	        e.printStackTrace(); // 錯誤處理
+	        return false; // 出現異常時返回 false
+	    }
 	}
+
 
 	@Override
 	public boolean deleteDog(int dogId) {

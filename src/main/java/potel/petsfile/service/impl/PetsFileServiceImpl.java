@@ -5,7 +5,8 @@ import java.util.List;
 import potel.petsfile.dao.PetsFileDao;
 import potel.petsfile.dao.impl.PetsFileDaoImpl;
 import potel.petsfile.service.PetsFileService;
-import potel.petsfile.vo.PetsFile;
+import potel.petsfile.vo.Cat;
+import potel.petsfile.vo.Dog;
 
 public class PetsFileServiceImpl implements PetsFileService {
 
@@ -16,60 +17,64 @@ public class PetsFileServiceImpl implements PetsFileService {
 	}
 
 	@Override
-	public List<PetsFile> getPetsFile() {
-		System.out.println("PetsFile service get petsFile");
-		List<PetsFile> petsFiles = petsFileDao.getPetsFile();
-		System.out.println("Retrieved petsFiles: " + petsFiles.size()); // 打印返回的論壇數量
-		return petsFiles;
-	}
-	  @Override
-	    public PetsFile selectFileById(int id) {
-	        System.out.println("PetsFile service selectFileById with id: " + id);
-	        PetsFile petsFile = petsFileDao.selectFileById(id);
-	        if (petsFile != null) {
-	            System.out.println("Retrieved PetsFile: " + petsFile);
-	        } else {
-	            System.out.println("No PetsFile found with id: " + id);
-	        }
-	        return petsFile;
-	    }
+    public List<Dog> getDog() {
+        System.out.println("PetsFileServiceImpl: Retrieving  dogs");
+        List<Dog> dogs = petsFileDao.selectDog();
+        System.out.println("Retrieved dogs: " + (dogs != null ? dogs.size() : 0)); // 打印返回的狗的數量
+        return dogs;
+    }
 
-	    // 新增一個新的 PetsFile
-	    @Override
-	    public boolean insertFile(PetsFile petsFile) {
-	        System.out.println("PetsFile service insertFile");
-	        boolean isSuccess = petsFileDao.insertFile(petsFile);
-	        if (isSuccess) {
-	            System.out.println("PetsFile inserted successfully: " + petsFile);
-	        } else {
-	            System.out.println("Failed to insert PetsFile: " + petsFile);
-	        }
-	        return isSuccess;
-	    }
+    @Override
+    public List<Cat> getCat() {
+        System.out.println("PetsFileServiceImpl: Retrieving  cats");
+        List<Cat> cats = petsFileDao.selectCat();
+        System.out.println("Retrieved cats: " + (cats != null ? cats.size() : 0)); // 打印返回的貓的數量
+        return cats;
+    }
 
-	    // 更新現有的 PetsFile
-	    @Override
-	    public boolean updateFile(PetsFile petsFile) {
-	        System.out.println("PetsFile service updateFile");
-	        boolean isSuccess = petsFileDao.updateFile(petsFile);
-	        if (isSuccess) {
-	            System.out.println("PetsFile updated successfully: " + petsFile);
-	        } else {
-	            System.out.println("Failed to update PetsFile: " + petsFile);
-	        }
-	        return isSuccess;
-	    }
+    @Override
+    public boolean addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
+        System.out.println("PetsFileServiceImpl: Adding new dog");
+        
+        // 调用 DAO 层的方法来添加狗
+        boolean isAdded = petsFileDao.addDog(dogOwner, dogName, dogBreed, dogGender, dogImages);
+        
+        // 返回操作是否成功
+        return isAdded;
+    }
 
-	    // 根據 ID 刪除指定的 PetsFile
-	    @Override
-	    public boolean deleteFile(int id) {
-	        System.out.println("PetsFile service deleteFile with id: " + id);
-	        boolean isSuccess = petsFileDao.deleteFile(id);
-	        if (isSuccess) {
-	            System.out.println("PetsFile with id " + id + " deleted successfully");
-	        } else {
-	            System.out.println("Failed to delete PetsFile with id: " + id);
-	        }
-	        return isSuccess;
-	    }
-	}
+    @Override
+    public boolean addCat(String catOwner, String catName, String catBreed, String catGender, int catImages) {
+        System.out.println("PetsFileServiceImpl: Adding new cat");
+
+        // 调用 DAO 层的方法来添加猫
+        boolean isAdded = petsFileDao.addCat(catOwner, catName, catBreed, catGender, catImages);
+        
+        // 返回操作是否成功
+        return isAdded;
+    }
+
+    @Override
+    public boolean deleteDog(int dogId) {
+        System.out.println("PetsFileServiceImpl: Deleting dog with ID: " + dogId);
+        return petsFileDao.deleteDog(dogId);
+    }
+
+    @Override
+    public boolean deleteCat(int catId) {
+        System.out.println("PetsFileServiceImpl: Deleting cat with ID: " + catId);
+        return petsFileDao.deleteCat(catId);
+    }
+
+    @Override
+    public void updateDog(int dogId, String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
+        System.out.println("PetsFileServiceImpl: Updating dog with ID: " + dogId);
+        petsFileDao.updateDog(dogId, dogOwner, dogName, dogBreed, dogGender, dogImages);
+    }
+
+    @Override
+    public void updateCat(int catId, String catOwner, String catName, String catBreed, String catGender, int catImages) {
+        System.out.println("PetsFileServiceImpl: Updating cat with ID: " + catId);
+        petsFileDao.updateCat(catId, catOwner, catName, catBreed, catGender, catImages);
+    }
+}
