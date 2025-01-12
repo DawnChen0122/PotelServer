@@ -118,7 +118,7 @@ public class BookingDaoImpl implements BookingDao{
 
 	@Override
 	public void addOrder(Order order) {
-String sql = "INSERT INTO orders (MEMBERID, ROOMTYPEID, ROOMID, EXPDATES, EXPDATEE, DATES, DATEE, AMOUNT, REFUNDAMOUNT, PETID, ORDERSTATE, PAYMENTSTATE, REFUNDSTATE, SCORE, COMMENT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+String sql = "INSERT INTO orders (MEMBERID, ROOMTYPEID, ROOMID, EXPDATES, EXPDATEE, DATES, DATEE, AMOUNT, PETID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = ds.getConnection();
     			PreparedStatement pstmt = conn.prepareStatement(sql);) {
@@ -131,13 +131,14 @@ String sql = "INSERT INTO orders (MEMBERID, ROOMTYPEID, ROOMID, EXPDATES, EXPDAT
             pstmt.setDate(6, new java.sql.Date(order.getDates().getTime()));
             pstmt.setDate(7, new java.sql.Date(order.getDatee().getTime()));
             pstmt.setInt(8, order.getAmount());
-            pstmt.setInt(9, order.getRefundamount());
-            pstmt.setInt(10, order.getPetid());
-            pstmt.setString(11, String.valueOf(order.getOrderstate()));
-            pstmt.setString(12, String.valueOf(order.getPaymentstate()));
-            pstmt.setString(13, String.valueOf(order.getRefundstate()));
-            pstmt.setInt(14, order.getScore());
-            pstmt.setString(15, order.getComment());
+//            pstmt.setInt(9, order.getRefundamount());
+            pstmt.setInt(9, order.getPetid());
+//            pstmt.setString(11, String.valueOf(order.getOrderstate()));
+//            pstmt.setString(12, String.valueOf(order.getPaymentstate()));
+//            pstmt.setString(13, String.valueOf(order.getRefundstate()));
+//            pstmt.setInt(14, order.getScore());
+//            pstmt.setString(15, order.getComment());
+           
 
             pstmt.executeUpdate();
         } catch (SQLException e) {

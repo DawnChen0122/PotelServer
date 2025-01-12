@@ -38,13 +38,15 @@ public class AddOrderController extends HttpServlet{
             String dates = request.getParameter("dates");
             String datee = request.getParameter("datee");
             int amount = Integer.parseInt(request.getParameter("amount"));
-            int refundamount = Integer.parseInt(request.getParameter("refundamount"));
+//            int refundamount = Integer.parseInt(request.getParameter("refundamount"));
             int petid = Integer.parseInt(request.getParameter("petid"));
-            char orderstate = request.getParameter("orderstate").charAt(0);
-            char paymentstate = request.getParameter("paymentstate").charAt(0);
-            char refundstate = request.getParameter("refundstate").charAt(0);
-            int score = Integer.parseInt(request.getParameter("score"));
-            String comment = request.getParameter("comment");
+//            char orderstate = request.getParameter("orderstate").charAt(0);
+//            char paymentstate = request.getParameter("paymentstate").charAt(0);
+//            char refundstate = request.getParameter("refundstate").charAt(0);
+//            int score = Integer.parseInt(request.getParameter("score"));
+//            String comment = request.getParameter("comment");
+            
+            
 
             // 創建 Order 實例並設置屬性
             Order order = new Order();
@@ -56,13 +58,13 @@ public class AddOrderController extends HttpServlet{
             order.setDates(java.sql.Date.valueOf(dates));
             order.setDatee(java.sql.Date.valueOf(datee));
             order.setAmount(amount);
-            order.setRefundamount(refundamount);
+//            order.setRefundamount(refundamount);
             order.setPetid(petid);
-            order.setOrderstate(orderstate);
-            order.setPaymentstate(paymentstate);
-            order.setRefundstate(refundstate);
-            order.setScore(score);
-            order.setComment(comment);
+//            order.setOrderstate(orderstate);
+//            order.setPaymentstate(paymentstate);
+//            order.setRefundstate(refundstate);
+//            order.setScore(score);
+//            order.setComment(comment);
             
             // 使用 Service 添加訂單
             bookingService.createOrder(order);
