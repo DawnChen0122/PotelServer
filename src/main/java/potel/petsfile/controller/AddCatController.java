@@ -34,6 +34,7 @@ public class AddCatController extends HttpServlet {
 	        resp.setContentType("application/json");
 	        resp.setCharacterEncoding("UTF-8");
 
+	        
 	        // 解析 JSON 請求內容
 	        BufferedReader reader = new BufferedReader(new InputStreamReader(req.getInputStream()));
 	        StringBuilder jsonRequest = new StringBuilder();
