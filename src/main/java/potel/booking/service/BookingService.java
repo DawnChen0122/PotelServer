@@ -14,7 +14,7 @@ public interface BookingService {
 	
 	byte[] findImageDataById(int imageId);
 	
-	void createOrder(Order order);
+	int createOrder(Order order);
 	
 	
 

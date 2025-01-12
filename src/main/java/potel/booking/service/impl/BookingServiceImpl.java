@@ -41,8 +41,8 @@ public class BookingServiceImpl implements BookingService{
 
 
 	@Override
-	public void createOrder(Order order) {
-        bookingDao.addOrder(order); // 調用 DAO 方法添加訂單
+	public int createOrder(Order order) {
+        return bookingDao.addOrder(order); // 調用 DAO 方法添加訂單
 	}
 
 	

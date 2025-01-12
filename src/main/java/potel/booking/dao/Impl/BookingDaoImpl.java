@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import potel.booking.vo.Order;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -117,33 +119,33 @@ public class BookingDaoImpl implements BookingDao{
 	}
 
 	@Override
-	public void addOrder(Order order) {
-String sql = "INSERT INTO orders (MEMBERID, ROOMTYPEID, ROOMID, EXPDATES, EXPDATEE, DATES, DATEE, AMOUNT, PETID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	public int addOrder(Order order){
+		String sql = "INSERT INTO orders (MEMBERID, ROOMTYPEID, EXPDATES, EXPDATEE, AMOUNT, PETID, ROOMID)"
+				+ " VALUES (?, ?, ?, ?, ?, ?, 1)";
         
+//		DataSource ds = JDBCConstants.getDataSource();
         try (Connection conn = ds.getConnection();
-    			PreparedStatement pstmt = conn.prepareStatement(sql);) {
-             
-            pstmt.setInt(1, order.getMemberid());
-            pstmt.setInt(2, order.getRoomtypeid());
-            pstmt.setInt(3, order.getRoomid());
-            pstmt.setDate(4, new java.sql.Date(order.getExpdates().getTime()));
-            pstmt.setDate(5, new java.sql.Date(order.getExpdatee().getTime()));
-            pstmt.setDate(6, new java.sql.Date(order.getDates().getTime()));
-            pstmt.setDate(7, new java.sql.Date(order.getDatee().getTime()));
-            pstmt.setInt(8, order.getAmount());
-//            pstmt.setInt(9, order.getRefundamount());
-            pstmt.setInt(9, order.getPetid());
-//            pstmt.setString(11, String.valueOf(order.getOrderstate()));
-//            pstmt.setString(12, String.valueOf(order.getPaymentstate()));
-//            pstmt.setString(13, String.valueOf(order.getRefundstate()));
-//            pstmt.setInt(14, order.getScore());
-//            pstmt.setString(15, order.getComment());
+    			PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+             int pind = 1;
+            pstmt.setInt(pind++, order.getMemberid());
+            pstmt.setInt(pind++, order.getRoomtypeid());
+            pstmt.setString(pind++,(order.getExpdates()));
+            pstmt.setString(pind++,(order.getExpdatee()));
+            pstmt.setInt(pind++, order.getAmount());
+            pstmt.setInt(pind++, order.getPetid());
+
            
 
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
+			}
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return -1;
     }
 	
 

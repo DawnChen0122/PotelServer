@@ -9,11 +9,11 @@ public class Order {
 //	private int orderid;          // 訂單 ID (主鍵，自動遞增)
     private int memberid;         // 會員 ID
     private int roomtypeid;       // 房型 ID
-    private int roomid;           // 房間 ID
-    private Date expdates;        // 入住日期
-    private Date expdatee;        // 退房日期
-    private Date dates;           // 開始日期
-    private Date datee;           // 結束日期
+//    private int roomid;           // 房間 ID
+    private String expdates;        // 入住日期
+    private String expdatee;        // 退房日期
+//    private String dates;           // 開始日期
+//    private String datee;           // 結束日期
     private int amount;           // 總金額
 //    private int refundamount;     // 退款金額
     private int petid;            // 寵物 ID
