@@ -3,6 +3,7 @@ package potel.shopping.Dao.Impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class ShopDaoImpl implements ShopDao {
 		String sql = "insert into prdorders (MEMBERID, AMOUNT, STATUS) values(?, ?, ?)";
 	
 		DataSource ds = JDBCConstants.getDataSource();
-		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql);) {
+		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
 			
 			pstmt.setInt(1, orderRequest.getMemberId());
 			pstmt.setInt(2, orderRequest.getAmount());
