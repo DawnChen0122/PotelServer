@@ -29,11 +29,7 @@ public class ProductController extends HttpServlet {
         	 ShopServiceImpl service = new ShopServiceImpl();
              Product product = service.getProduct(Integer.parseInt(prdId));
 
-            // 將產品列表轉換為 JSON
-             
 //            String json = gson.toJson(products);
-             
-            // 將 JSON 回傳給前端
              
             resp.getWriter().write(new Gson().toJson(product, Product.class));
         } catch (Exception e) {

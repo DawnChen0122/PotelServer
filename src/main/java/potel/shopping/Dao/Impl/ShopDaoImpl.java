@@ -56,11 +56,6 @@ public class ShopDaoImpl implements ShopDao {
 		return null;
 	}
 
-	@Override
-	public int insert(Product product) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public Product select(int prdId) throws NamingException {
@@ -87,27 +82,9 @@ public class ShopDaoImpl implements ShopDao {
 		return null;
 	}
 
-	@Override
-	public int deletebyId(Integer prdId) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
-	public int update(Product product) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int insertOrder(OrderRequest orderRequest) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
-	public int insertOrder(OrderRequest orderRequest) {
+	public int insertOrder(OrderRequest orderRequest) throws NamingException {
 		String sql = "insert into prdorders (MEMBERID, AMOUNT, STATUS) values(?, ?, ?)";
 	
 		DataSource ds = JDBCConstants.getDataSource();
@@ -128,4 +105,26 @@ public class ShopDaoImpl implements ShopDao {
 		}
 		return -1;
 	}
+
+	
+	@Override
+	public int insertOrderItem(OrderRequest orderRequest) throws NamingException {
+		String sql = "insert into prdorditems (PRDORDERID, PRDID, PRDCOUNT) values(?, ?, ?)";
+		
+		DataSource ds = JDBCConstants.getDataSource();
+		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql);) {
+		
+			pstmt.setInt(1, orderRequest.getPrdorderid());
+			pstmt.setInt(2, orderRequest.getPrdId());
+			pstmt.setInt(3, orderRequest.getPrdCount());
+			
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return 1;
+	}
+			
 }

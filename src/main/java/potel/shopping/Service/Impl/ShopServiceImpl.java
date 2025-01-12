@@ -31,17 +31,23 @@ public class ShopServiceImpl implements ShopService {
 		return listDao.selectAll(prdtype.toUpperCase());
 	}
 
+	
 	@Override
 	public Product getProduct(int prdId) throws NamingException {
 		
 		return listDao.select(prdId);
 	}
 
+	
 	@Override
-	public int insertOrder(OrderRequest orderRequest) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int createOrder(OrderRequest orderRequest) throws NamingException {
+		int prdorderid = listDao.insertOrder(orderRequest);
+		if (prdorderid <=0) {
+			return -1;
+		}
+		
+		orderRequest.setPrdorderid(prdorderid);
+		listDao.insertOrderItem(orderRequest);
+		return prdorderid;
 	}
-
-
 }

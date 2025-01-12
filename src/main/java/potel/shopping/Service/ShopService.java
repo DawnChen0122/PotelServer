@@ -13,6 +13,8 @@ public interface ShopService {
 	
 	Product getProduct(int prdId) throws NamingException;
 	
-	int insertOrder(OrderRequest orderRequest);
+	int createOrder(OrderRequest orderRequest) throws NamingException;
+	
+//	int insertOrderItem(OrderRequest orderRequest) throws NamingException;
 	
 } 

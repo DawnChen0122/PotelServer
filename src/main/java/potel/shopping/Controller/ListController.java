@@ -29,12 +29,9 @@ public class ListController extends HttpServlet {
         	 ShopServiceImpl service = new ShopServiceImpl();
              List<Product> products = service.selectAll(prdtype);
 
-             // 將產品列表轉換為 JSON
              Gson gson = new Gson();
              
             String json = gson.toJson(products);
-             
-            // 將 JSON 回傳給前端
              
             resp.getWriter().write(json);
         } catch (Exception e) {
