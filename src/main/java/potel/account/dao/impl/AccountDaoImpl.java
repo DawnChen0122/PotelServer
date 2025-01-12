@@ -145,17 +145,66 @@ public class AccountDaoImpl implements AccountDao {
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
-					Member member = new Member();
-					member.setMemberid(rs.getInt("MEMBERID"));
-					member.setName(rs.getString("NAME"));
-					member.setCellphone(rs.getString("CELLPHONE"));
-					member.setAddress(rs.getString("ADDRESS"));
-					member.setGender(rs.getString("GENDER").charAt(0));
-					member.setBirthday(rs.getString("BIRTHDAY"));
-					member.setEmail(rs.getString("EMAIL"));
-					member.setPasswd(rs.getString("PASSWD"));
-					member.setImageid(rs.getInt("IMAGEID"));
-					return member;
+//					Member member = new Member();
+//					member.setMemberid(rs.getInt("MEMBERID"));
+//					member.setName(rs.getString("NAME"));
+//					member.setCellphone(rs.getString("CELLPHONE"));
+//					member.setAddress(rs.getString("ADDRESS"));
+//					member.setGender(rs.getString("GENDER").charAt(0));
+//					member.setBirthday(rs.getString("BIRTHDAY"));
+//					member.setEmail(rs.getString("EMAIL"));
+//					member.setPasswd(rs.getString("PASSWD"));
+//					member.setImageid(rs.getInt("IMAGEID"));
+//					
+					  Member member = new Member();
+				        
+				        // 取得 MEMBERID 並印出
+				        int memberId = rs.getInt("MEMBERID");
+				        member.setMemberid(memberId);
+				        System.out.println("MemberID: " + memberId);
+				        
+				        // 取得 NAME 並印出
+				        String name = rs.getString("NAME");
+				        member.setName(name);
+				        System.out.println("Name: " + name);
+				        
+				        // 取得 CELLPHONE 並印出
+				        String cellphone = rs.getString("CELLPHONE");
+				        member.setCellphone(cellphone);
+				        System.out.println("Cellphone: " + cellphone);
+				        
+				        // 取得 ADDRESS 並印出
+				        String address = rs.getString("ADDRESS");
+				        member.setAddress(address);
+				        System.out.println("Address: " + address);
+				        
+				        // 取得 GENDER 並印出
+				        String genderStr = rs.getString("GENDER");
+				        char gender = genderStr.charAt(0);
+				        member.setGender(gender);
+				        System.out.println("Gender: " + gender);
+				        
+				        // 取得 BIRTHDAY 並印出
+				        String birthday = rs.getString("BIRTHDAY");
+				        member.setBirthday(birthday);
+				        System.out.println("Birthday: " + birthday);
+				        
+				        // 取得 EMAIL 並印出
+				        String email = rs.getString("EMAIL");
+				        member.setEmail(email);
+				        System.out.println("Email: " + email);
+				        
+				        // 取得 PASSWD 並印出
+				        String passwd = rs.getString("PASSWD");
+				        member.setPasswd(passwd);
+				        System.out.println("Passwd: " + passwd);
+				        
+				        // 取得 IMAGEID 並印出
+				        int imageId = rs.getInt("IMAGEID");
+				        member.setImageid(imageId);
+				        System.out.println("ImageID: " + imageId);
+				        
+				        return member;
 				}
 			}
 		} catch (SQLException e) {

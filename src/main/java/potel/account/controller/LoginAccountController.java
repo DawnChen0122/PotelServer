@@ -38,14 +38,9 @@ public class LoginAccountController extends HttpServlet {
 			resp.setCharacterEncoding("UTF-8");
 			String input = req.getParameter("INPUT");
 			String passwd = req.getParameter("PASSWORD");
-			System.out.println("input(" + input + "," + passwd + ")");
 			Member result = accountService.login(input,passwd);
-//			JsonObject respBody = new JsonObject();
-////			respBody.addProperty("success", result);
-////			respBody.addProperty("message", result ? "正確" : "不正確");
-//			respBody.
-//			String res = respBody.toString();
-//			System.out.println("input(" + input + "," + passwd + ")==>" + res);
+			System.out.println("input(" + input + "," + passwd );
+
 			resp.getWriter().write(new Gson().toJson(result, Member.class));
 		}
 
