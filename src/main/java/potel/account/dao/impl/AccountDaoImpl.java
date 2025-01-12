@@ -38,7 +38,7 @@ public class AccountDaoImpl implements AccountDao {
 				member.setName(rs.getString("name"));
 				member.setCellphone(rs.getString("cellphone"));
 				member.setAddress(rs.getString("address"));
-//				member.setBirthday(rs.getString("birthday"));
+				member.setBirthday(rs.getString("birthday"));
 				member.setEmail(rs.getString("email"));
 				member.setPasswd(rs.getString("passwd"));
 				members.add(member);
@@ -55,17 +55,17 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean insertMember(Member member) {
-		String sql = "INSERT INTO members (name, cellphone, address ,gender , email, passwd ) "
-				+ "VALUES (?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO members (name, cellphone, address ,gender , email, passwd ,birthday ) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, member.getName());
 			stmt.setString(2, member.getCellphone());
 			stmt.setString(3, member.getAddress());
 			stmt.setString(4, member.getGender() != null ? member.getGender().toString() : null);
-//			stmt.setString(5, member.getBirthday());
 			stmt.setString(5, member.getEmail());
 			stmt.setString(6, member.getPasswd());
-//			stmt.setInt(7, member.getImageid());
+			stmt.setString(7, member.getBirthday());
+//			stmt.setInt(8, member.getImageid());
 			return stmt.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -135,7 +135,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Member selectMemeber(String input, String password)  {
+	public Member selectMemeber(String input, String password) {
 		String sql = "SELECT * FROM members Where (EMAIL = ?  or  CELLPHONE = ?)  and PASSWD = ?";
 		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -146,23 +146,23 @@ public class AccountDaoImpl implements AccountDao {
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					Member member = new Member();
-//					member.setMemberid(rs.getInt("MEMBERID"));
+					member.setMemberid(rs.getInt("MEMBERID"));
 					member.setName(rs.getString("NAME"));
 					member.setCellphone(rs.getString("CELLPHONE"));
 					member.setAddress(rs.getString("ADDRESS"));
-//					member.setGender(rs.getString("GENDER").charAt(0));
-//					member.setBirthday(rs.getString("BIRTHDAY"));
+					member.setGender(rs.getString("GENDER").charAt(0));
+					member.setBirthday(rs.getString("BIRTHDAY"));
 					member.setEmail(rs.getString("EMAIL"));
 					member.setPasswd(rs.getString("PASSWD"));
 					member.setImageid(rs.getInt("IMAGEID"));
-			           return member;
-	            }
-	        }
-	    } catch (SQLException e) {
-	        // 這裡捕獲 SQLException 並處理
-	        e.printStackTrace();
-	    }
+					return member;
+				}
+			}
+		} catch (SQLException e) {
 
-	    return null; // 如果沒有找到對應的會員
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }
