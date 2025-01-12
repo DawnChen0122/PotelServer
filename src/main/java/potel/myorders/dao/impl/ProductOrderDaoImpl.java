@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.naming.NamingException;
@@ -20,7 +21,7 @@ import potel.utils.JDBCConstants;
 
 public class ProductOrderDaoImpl implements ProductOrderDao {
 	@Override
-	public ResponseObject queryPrdOrders(String memberid, String status) throws NamingException {
+	public ResponseObject queryPrdOrders(String memberid, String status, String datestart, String dateend) throws NamingException, ParseException {
 		ResponseObject ro = new ResponseObject();
 		DataSource ds = JDBCConstants.getDataSource();
 		
@@ -32,7 +33,13 @@ public class ProductOrderDaoImpl implements ProductOrderDao {
 		if(!"A".equals(status)) {
 			sbsql.append(" and po.STATUS=?");
 		}
-		
+		if(datestart!=null && !datestart.isEmpty()) {
+			sbsql.append(" and po.CREATEDATE>=?");
+		}
+		if(dateend!=null && !dateend.isEmpty()) {
+			sbsql.append(" and po.CREATEDATE<=?");
+		}
+		System.out.println("sql==>" + sbsql.toString());
 		try (
 		     Connection conn = ds.getConnection();
 		     PreparedStatement pstmt = conn.prepareStatement(sbsql.toString());) {
@@ -40,6 +47,12 @@ public class ProductOrderDaoImpl implements ProductOrderDao {
 			pstmt.setInt(pind++, Integer.parseInt(memberid));
 			if(!"A".equals(status)) {
 				pstmt.setString(pind++, String.valueOf(status));
+			}
+			if(datestart!=null && !datestart.isEmpty()) {
+				pstmt.setString(pind++, datestart + "T00:00:00");
+			}
+			if(dateend!=null && !dateend.isEmpty()) {
+				pstmt.setString(pind++, dateend + "T23:59:59");
 			}
 			try(ResultSet rs = pstmt.executeQuery();){
 				Object temp = null;
