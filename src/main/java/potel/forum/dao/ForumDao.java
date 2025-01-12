@@ -31,4 +31,9 @@ public interface ForumDao {
 	void updatePost(int postId, String title, String content);
 
 	void updateComment(int commentId, String content);
+
+	boolean addLike(int postId, int memberId);
+
+	boolean cancelLike(int postId, int memberId);
+
 }

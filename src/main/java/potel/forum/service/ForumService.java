@@ -31,4 +31,8 @@ public interface ForumService {
 
 	void updateComment(int commentId, String content);
 
+	boolean likePost(int postId, int memberId);
+
+	boolean unlikePost(int postId, int memberId);
+
 }

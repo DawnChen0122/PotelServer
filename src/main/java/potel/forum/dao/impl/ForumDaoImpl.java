@@ -342,7 +342,6 @@ public class ForumDaoImpl implements ForumDao {
 		}
 	}
 
-	
 	@Override
 	public void updateComment(int commentId, String content) {
 		System.out.println("UPDATE SQL comment");
@@ -360,5 +359,33 @@ public class ForumDaoImpl implements ForumDao {
 		
 	}
 
+	
+	@Override
+	public boolean addLike(int postId, int memberId) {
+		 String sql = "INSERT INTO likes (MEMBERID, POSTID) VALUES (?, ?)";
+	        try (Connection conn = ds.getConnection();
+	             PreparedStatement stmt = conn.prepareStatement(sql)) {
+	            stmt.setInt(1, memberId);
+	            stmt.setInt(2, postId);
+	            return stmt.executeUpdate() > 0;
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	}
+
+	@Override
+	public boolean cancelLike(int postId, int memberId) {
+		String sql = "DELETE FROM likes WHERE MEMBERID = ? AND POSTID = ?";
+        try (Connection conn = ds.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, memberId);
+            stmt.setInt(2, postId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+	}
 
 }

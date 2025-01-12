@@ -17,8 +17,7 @@ public class ReadImage {
 			File[] files = dir.listFiles();
 			DataSource ds = JDBCConstants.getDataSource2();
 			try (Connection conn = ds.getConnection();
-			     PreparedStatement pstmt = conn.prepareStatement("update images set imagedata=? where imageid=?");) {
-//				PreparedStatement pstmt = conn.prepareStatement("insert into images(imagedata,imageid) values(?,?)");) {
+				PreparedStatement pstmt = conn.prepareStatement("insert into images(imagedata,imageid) values(?,?)");) {
 
 				for (File file : files) {
 					System.out.println("file=" + file.getName());

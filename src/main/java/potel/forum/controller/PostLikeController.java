@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import potel.forum.service.ForumService;
 import potel.forum.service.impl.ForumServiceImpl;
 
-@WebServlet("/posts/*")
+@WebServlet("/Forum/LikeControl")
 public class PostLikeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -20,6 +20,31 @@ public class PostLikeController extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		forumService = new ForumServiceImpl(); // 初始化 ForumService
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String postId =req.getParameter("postId");
+		String memberId =req.getParameter("memberId");
+		if (postId == null || memberId == null) {
+	        resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 錯誤
+	        return;
+	    }
+
+	    try {
+	        // 調用 ForumService 的方法進行邏輯處理
+	        boolean isLiked = forumService.likePost(Integer.parseInt(postId), Integer.parseInt(memberId));
+
+	        if (isLiked) {
+	            resp.setStatus(HttpServletResponse.SC_OK); // 200 成功
+	        } else {
+	            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 內部錯誤
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	    }
+
 	}
 	
 }

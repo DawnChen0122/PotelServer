@@ -89,5 +89,15 @@ public class ForumServiceImpl implements ForumService {
 		
 	}
 
+	@Override
+	public boolean likePost(int postId, int memberId) {
+		return forumDao.addLike(postId,memberId);
+	}
+
+	@Override
+	public boolean unlikePost(int postId, int memberId) {
+		return forumDao.cancelLike(postId,memberId);
+	}
+
 
 }
