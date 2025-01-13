@@ -24,13 +24,13 @@ public class RoomTypeImageController extends HttpServlet {
        
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String imageId = req.getParameter("imageId");
-        System.out.println("[" + new Date() + "] imageId=" + imageId);
+		String imageid = req.getParameter("imageid");
+        System.out.println("[" + new Date() + "] imageid=" + imageid);
         
         BookingDaoImpl bookingDao = new BookingDaoImpl(); // 實例化 DAO
         
         try {
-            int id = Integer.parseInt(imageId); // 確保 imageId 是整數
+            int id = Integer.parseInt(imageid); // 確保 imageId 是整數
             byte[] imagedata = bookingDao.findImageDataById(id); // 獲取圖片數據
             
             if (imagedata != null) {
