@@ -1,5 +1,6 @@
 package potel.petsfile.dao;
 
+import java.io.InputStream;
 import java.util.List;
 
 import potel.petsfile.vo.Cat;
@@ -9,6 +10,10 @@ public interface PetsFileDao {
     List<Dog> selectDog();
     
     List<Cat> selectCat();
+    
+    Integer insertImage(InputStream imageStream);
+    
+	void addPost(int memberId, String title, String content, int imageId);
 
     boolean addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages);
     
@@ -17,6 +22,10 @@ public interface PetsFileDao {
     boolean deleteDog(int dogId);
 
     boolean deleteCat(int catId);
+    
+	void updatPostWithImage(int postId, String title, String content, int imageId);
+
+	void updatePostWithoutImage(int postId, String title, String content);
 
     void updateDog(int dogId, String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages);
     

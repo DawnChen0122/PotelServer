@@ -1,5 +1,6 @@
 package potel.petsfile.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
 
 import potel.petsfile.dao.PetsFileDao;
@@ -32,6 +33,15 @@ public class PetsFileServiceImpl implements PetsFileService {
         return cats;
     }
 
+    @Override
+	public int saveImageToDatabase(InputStream imageStream) {
+		return petsFileDao.insertImage(imageStream);
+	}
+
+	@Override
+	public void addPost(int memberId, String title, String content, int imageId) {
+		petsFileDao.addPost(memberId, title, content, imageId);
+	}
     @Override
     public boolean addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
         System.out.println("PetsFileServiceImpl: Adding new dog");
@@ -66,6 +76,16 @@ public class PetsFileServiceImpl implements PetsFileService {
         return petsFileDao.deleteCat(catId);
     }
 
+    @Override
+	public void updatPostWithImage(int postId, String title, String content, Integer imageId) {
+    	petsFileDao.updatPostWithImage(postId, title, content, imageId);
+	}
+
+	@Override
+	public void updatPostWithoutImage(int postId, String title, String content) {
+		petsFileDao.updatePostWithoutImage(postId, title, content);
+		
+	}
     @Override
     public void updateDog(int dogId, String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
         System.out.println("PetsFileServiceImpl: Updating dog with ID: " + dogId);

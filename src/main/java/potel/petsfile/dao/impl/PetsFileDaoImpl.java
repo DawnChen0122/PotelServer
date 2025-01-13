@@ -1,9 +1,10 @@
 package potel.petsfile.dao.impl;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +103,49 @@ public class PetsFileDaoImpl implements PetsFileDao {
 		// 如果沒有查詢到資料，返回 null；否則返回查詢結果列表
 		return cats.isEmpty() ? null : cats;
 	}
+	
+	@Override
+	public Integer insertImage(InputStream imageStream) {
+		int imageId = 0;
+		String sql = "INSERT INTO images (IMAGEDATA) VALUES (?)";
+
+		try (Connection conn = ds.getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+			stmt.setBlob(1, imageStream);
+			stmt.executeUpdate();
+
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					imageId = generatedKeys.getInt(1);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return imageId;
+	}
+
+	@Override
+	public void addPost(int memberId, String title, String content, int imageId) {
+		String sql = "INSERT INTO forum (MEMBERID, TITLE, CONTENT, IMAGEID) VALUES (?, ?, ?, ?)"; // 去除 CREATEDATE
+
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setInt(1, memberId);
+			stmt.setString(2, title);
+			stmt.setString(3, content);
+			if (imageId > 0) {
+				stmt.setInt(4, imageId);
+			} else {
+				stmt.setNull(4, java.sql.Types.INTEGER);
+			}
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public boolean addDog(String dogOwner, String dogName, String dogBreed, String dogGender, int dogImages) {
@@ -197,6 +241,42 @@ public class PetsFileDaoImpl implements PetsFileDao {
 		} catch (Exception e) {
 			e.printStackTrace(); // 捕獲並輸出錯誤信息
 			return false; // 出現錯誤時返回 false
+		}
+	}
+
+	
+	@Override
+	public void updatPostWithImage(int postId, String title, String content, int imageId) {
+		System.out.println("UPDATE SQL WithImage");
+		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ?, IMAGEID = ? WHERE POSTID = ?"; 
+
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setString(1, title);
+			stmt.setString(2, content);
+			stmt.setInt(3,imageId);
+			stmt.setInt(4, postId);
+			
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updatePostWithoutImage(int postId, String title, String content) {
+		System.out.println("UPDATE SQL WithoutImage");
+		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ?, IMAGEID = NULL WHERE POSTID = ?"; 
+
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setString(1, title);
+			stmt.setString(2, content);
+			stmt.setInt(3, postId);
+			
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
