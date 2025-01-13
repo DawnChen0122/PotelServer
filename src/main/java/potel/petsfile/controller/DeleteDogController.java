@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import potel.petsfile.service.PetsFileService;
 import potel.petsfile.service.impl.PetsFileServiceImpl;
 
-@WebServlet("/PetsFile/Dogs/*")
+@WebServlet("/PetsFile/deleteDog/*")
 public class DeleteDogController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private PetsFileService petsfileService;
