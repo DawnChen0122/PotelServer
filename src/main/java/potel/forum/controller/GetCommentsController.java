@@ -1,20 +1,16 @@
 package potel.forum.controller;
 
 import java.io.IOException;
-
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.google.gson.Gson;
-
 import potel.forum.service.ForumService;
 import potel.forum.service.impl.ForumServiceImpl;
-import potel.forum.vo.Comment;
+import potel.forum.vo.CommentWithMemberName;
 
 @WebServlet("/Forum/Comments")
 public class GetCommentsController extends HttpServlet{
@@ -35,7 +31,7 @@ public class GetCommentsController extends HttpServlet{
         resp.setCharacterEncoding("UTF-8");
 
         // 獲取 Comment 資料
-        List<Comment> Comments;
+        List<CommentWithMemberName> Comments;
         try {
         	Comments = forumService.getComment();  
         } catch (Exception e) {

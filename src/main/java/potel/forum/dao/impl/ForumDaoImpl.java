@@ -12,7 +12,8 @@ import potel.utils.Defines;
 import com.zaxxer.hikari.HikariDataSource;
 import potel.forum.dao.ForumDao;
 import potel.forum.vo.Comment;
-import potel.forum.vo.Forum;
+import potel.forum.vo.CommentWithMemberName;
+import potel.forum.vo.ForumWithMemberName;
 import potel.forum.vo.Like;
 
 public class ForumDaoImpl implements ForumDao {
@@ -37,9 +38,9 @@ public class ForumDaoImpl implements ForumDao {
 	}
 
 	@Override
-	public List<Forum> selectAll() {
-		String sql = "SELECT * FROM forum";
-		List<Forum> forums = new ArrayList<>();
+	public List<ForumWithMemberName> selectAll() {
+		String sql = "SELECT f.POSTID, f.MEMBERID, f.TITLE, f.CONTENT, f.CREATEDATE, f.MODIFYDATE, f.IMAGEID, m.NAME AS MEMBERNAME FROM forum f JOIN members m ON f.MEMBERID = m.MEMBERID;";
+		List<ForumWithMemberName> forums = new ArrayList<>();
 
 		try (Connection conn = ds.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -49,7 +50,7 @@ public class ForumDaoImpl implements ForumDao {
 
 			while (rs.next()) {
 				Object temp = null;
-				Forum forum = new Forum();
+				ForumWithMemberName forum = new ForumWithMemberName();
 				forum.setPostId(rs.getInt("POSTID"));
 				forum.setMemberId(rs.getInt("MEMBERID"));
 				forum.setTitle(rs.getString("TITLE"));
@@ -62,9 +63,8 @@ public class ForumDaoImpl implements ForumDao {
 				} else {
 					forum.setImageId(imageId);
 				}
-
-				System.out.println("IMAGEID: " + (rs.wasNull() ? "NULL" : imageId));
-				forums.add(forum);
+				 forum.setMemberName(rs.getString("MEMBERNAME")); // 設置 MemberName
+			     forums.add(forum);
 			}
 
 			System.out.println("Fetched " + forums.size() + " forums from the database.");
@@ -103,9 +103,9 @@ public class ForumDaoImpl implements ForumDao {
 	}
 
 	@Override
-	public List<Comment> selectComment() {
-		String sql = "SELECT * FROM comments";
-		List<Comment> comments = new ArrayList<>();
+	public List<CommentWithMemberName> selectComment() {
+		String sql = "  SELECT c.COMMENTID, c.POSTID, c.MEMBERID, c.CONTENT, c.CREATEDATE, c.MODIFYDATE, m.NAME AS MEMBERNAME FROM comments c JOIN members m ON  c.MEMBERID = m.MEMBERID";
+		List<CommentWithMemberName> comments = new ArrayList<>();
 
 		try (Connection conn = ds.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -115,13 +115,14 @@ public class ForumDaoImpl implements ForumDao {
 
 			while (rs.next()) {
 				Object temp = null;
-				Comment comment = new Comment();
+				CommentWithMemberName comment = new CommentWithMemberName();
 				comment.setCommentId(rs.getInt("COMMENTID"));
 				comment.setPostId(rs.getInt("POSTID"));
 				comment.setMemberId(rs.getInt("MEMBERID"));
 				comment.setContent(rs.getString("CONTENT"));
 				comment.setCreateDate((temp = rs.getTimestamp("CREATEDATE")) == null ? null : Defines.sdf.format(temp));
 				comment.setModifyDate((temp = rs.getTimestamp("MODIFYDATE")) == null ? null : Defines.sdf.format(temp));
+				comment.setMemberName(rs.getString("MEMBERNAME"));
 				comments.add(comment);
 			}
 
@@ -270,38 +271,36 @@ public class ForumDaoImpl implements ForumDao {
 		}
 	}
 
-
 	@Override
 	public boolean deleteComment(int commentId) {
-		String sql = "DELETE FROM comments WHERE COMMENTID = ?"; 
+		String sql = "DELETE FROM comments WHERE COMMENTID = ?";
 
-	    try (Connection conn = ds.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = ds.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-	    	        pstmt.setInt(1, commentId);
+			pstmt.setInt(1, commentId);
 
-	        int affectedRows = pstmt.executeUpdate();
+			int affectedRows = pstmt.executeUpdate();
 
-	        return affectedRows > 0;
+			return affectedRows > 0;
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-	
+
 	@Override
 	public void updatPostWithImage(int postId, String title, String content, int imageId) {
 		System.out.println("UPDATE SQL WithImage");
-		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ?, IMAGEID = ? WHERE POSTID = ?"; 
+		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ?, IMAGEID = ? WHERE POSTID = ?";
 
 		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
 			stmt.setString(1, title);
 			stmt.setString(2, content);
-			stmt.setInt(3,imageId);
+			stmt.setInt(3, imageId);
 			stmt.setInt(4, postId);
-			
+
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -311,14 +310,14 @@ public class ForumDaoImpl implements ForumDao {
 	@Override
 	public void updatePostWithoutImage(int postId, String title, String content) {
 		System.out.println("UPDATE SQL WithoutImage");
-		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ?, IMAGEID = NULL WHERE POSTID = ?"; 
+		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ?, IMAGEID = NULL WHERE POSTID = ?";
 
 		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
 			stmt.setString(1, title);
 			stmt.setString(2, content);
 			stmt.setInt(3, postId);
-			
+
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -328,14 +327,14 @@ public class ForumDaoImpl implements ForumDao {
 	@Override
 	public void updatePost(int postId, String title, String content) {
 		System.out.println("UPDATE SQL same Image");
-		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ? WHERE POSTID = ?"; 
+		String sql = "UPDATE forum SET TITLE = ?, CONTENT = ? WHERE POSTID = ?";
 
 		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
 			stmt.setString(1, title);
 			stmt.setString(2, content);
 			stmt.setInt(3, postId);
-			
+
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -345,47 +344,44 @@ public class ForumDaoImpl implements ForumDao {
 	@Override
 	public void updateComment(int commentId, String content) {
 		System.out.println("UPDATE SQL comment");
-		String sql = "UPDATE comments SET CONTENT = ? WHERE COMMENTID = ?"; 
+		String sql = "UPDATE comments SET CONTENT = ? WHERE COMMENTID = ?";
 
 		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
 			stmt.setString(1, content);
 			stmt.setInt(2, commentId);
-	
+
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			handleSQLException(e);
 		}
-		
+
 	}
 
-	
 	@Override
 	public boolean addLike(int postId, int memberId) {
-		 String sql = "INSERT INTO likes (MEMBERID, POSTID) VALUES (?, ?)";
-	        try (Connection conn = ds.getConnection();
-	             PreparedStatement stmt = conn.prepareStatement(sql)) {
-	            stmt.setInt(1, memberId);
-	            stmt.setInt(2, postId);
-	            return stmt.executeUpdate() > 0;
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	            return false;
-	        }
+		String sql = "INSERT INTO likes (MEMBERID, POSTID) VALUES (?, ?)";
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setInt(1, memberId);
+			stmt.setInt(2, postId);
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
 	public boolean cancelLike(int postId, int memberId) {
 		String sql = "DELETE FROM likes WHERE MEMBERID = ? AND POSTID = ?";
-        try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, memberId);
-            stmt.setInt(2, postId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+		try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setInt(1, memberId);
+			stmt.setInt(2, postId);
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

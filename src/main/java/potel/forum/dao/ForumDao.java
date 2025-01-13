@@ -3,16 +3,17 @@ package potel.forum.dao;
 import java.io.InputStream;
 import java.util.List;
 import potel.forum.vo.Comment;
-import potel.forum.vo.Forum;
+import potel.forum.vo.CommentWithMemberName;
+import potel.forum.vo.ForumWithMemberName;
 import potel.forum.vo.Like;
 
 public interface ForumDao {
 	
-	List<Forum> selectAll() ;
+	List<ForumWithMemberName> selectAll() ;
 	
 	List<Like> selectlike();
 
-	List<Comment> selectComment();
+	List<CommentWithMemberName> selectComment();
 
 	Integer insertImage(InputStream imageStream);
 
